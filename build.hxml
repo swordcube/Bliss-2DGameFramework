@@ -1,0 +1,15 @@
+-lib raylib-hx
+
+-D HXCPP_CHECK_POINTER
+-D HXCPP_STACK_LINE
+-D analyzer-optimize
+
+-cp source
+-main Main
+
+-dce no
+
+-cpp bin/cpp
+-cmd cd bin/cpp
+-cmd ./Main
+-cmd cd ../../
