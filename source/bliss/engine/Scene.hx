@@ -1,5 +1,6 @@
 package bliss.engine;
 
-class Scene extends Object2D {
+class Scene extends Group<Object> {
 	public function create() {}
+	public function createPost() {}
 }

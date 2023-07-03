@@ -16,6 +16,11 @@ class Application {
 	public static var framerate:Int = 60;
 
 	/**
+	 * The time in seconds between the last and current frame.
+	 */
+	public var deltaTime:Float = 0;
+
+	/**
 	 * The main window that was automatically created
 	 * when this application opened.
 	 */
@@ -36,7 +41,7 @@ class Application {
 			return;
 		}
 		haxe.Log.trace = (v, ?pos) -> {
-            Debug.log(GENERAL, v);
+            Debug.log(GENERAL, v, pos);
         };
 		self = new Application();
 
@@ -68,18 +73,24 @@ class Application {
 		// must stop aswell.
 		for(window in Window._windows)
 			window.close();
+
+		Debug.log(GENERAL, "Application stopped!");
 	}
 
 	public inline function update() {
+		var oldTime:Float = Sys.time();
+
 		for(window in Window._windows) {
 			if(!running) break;
 
-			window.update();
+			window.update(deltaTime);
 			if(!window.closed)
 				window.render();
 		}
 		if(Window._windows.length < 1)
-			running = false;
+			Application.stop();
+
+		deltaTime = Sys.time() - oldTime;
 	}
 
 	//##-- Used internally, please use Application.create --##//

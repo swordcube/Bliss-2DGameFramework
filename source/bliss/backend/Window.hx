@@ -102,7 +102,7 @@ class Window {
 	 * Call the `restore()` function to unminimize it.
 	 */
 	public function minimize() {
-		onMinimize.emit(this);
+		onMinimize.emit();
 		Rl.minimizeWindow();
 	}
 
@@ -111,7 +111,7 @@ class Window {
 	 * Call the `restore()` function to unmaximize it.
 	 */
 	public function maximize() {
-		onMaximize.emit(this);
+		onMaximize.emit();
 		Rl.maximizeWindow();
 	}
 
@@ -120,7 +120,7 @@ class Window {
 	 * or to it's original size.
 	 */
 	public function restore() {
-		onRestore.emit(this);
+		onRestore.emit();
 		Rl.restoreWindow();
 	}
 
@@ -129,7 +129,7 @@ class Window {
 	 */
 	public function close() {
 		if(closed) return;
-		onClose.emit(this);
+		onClose.emit();
 		Rl.closeWindow();
 		closed = true;
 		_windows.remove(this);
@@ -139,12 +139,12 @@ class Window {
 	/**
 	 * The signal that gets ran when the window updates.
 	 */
-	public var onUpdate:Signal<Window> = new Signal();
+	public var onUpdate:TypedSignal<Float->Void> = new TypedSignal();
 
 	/**
 	 * The signal that gets ran when the window renders.
 	 */
-	public var onRender:Signal<Window> = new Signal();
+	public var onRender:Signal = new Signal();
 
 	/**
 	 * The signal that gets ran when the window is about to close.
@@ -152,22 +152,22 @@ class Window {
 	 * Use this to save game settings or something before the
 	 * game can close!
 	 */
-	public var onClose:Signal<Window> = new Signal();
+	public var onClose:Signal = new Signal();
 
 	/**
 	 * The signal that gets ran when the window is minimized.
 	 */
-	public var onMinimize:Signal<Window> = new Signal();
+	public var onMinimize:Signal = new Signal();
 
 	/**
 	 * The signal that gets ran when the window is maximized.
 	 */
-	public var onMaximize:Signal<Window> = new Signal();
+	public var onMaximize:Signal = new Signal();
 
 	/**
 	 * The signal that gets ran when the window is restored.
 	 */
-	public var onRestore:Signal<Window> = new Signal();
+	public var onRestore:Signal = new Signal();
 
 	//##-- VARIABLES & FUNCTIONS THAT NORMALLY SHOULDN'T BE TOUCHED --##//
 	/**
@@ -176,17 +176,19 @@ class Window {
 	@:noCompletion
 	private function render() {
 		Rl.clearBackground(clearColor.toRaylib());
-		onRender.emit(this);
+		onRender.emit();
 		Rl.endDrawing(); // This function in raylib stops obtaining inputs and drawing. Remove for other renderers.
 	}
 
 	/**
 	 * Updates this window.
+	 * 
+	 * @param elapsed The time in seconds between the last and current frame.
 	 */
 	@:noCompletion
-	private function update() {
+	private function update(elapsed:Float) {
 		Rl.beginDrawing(); // This function in raylib starts obtaining inputs and drawing. Remove for other renderers.
-		onUpdate.emit(this);
+		onUpdate.emit(elapsed);
 		if(!closed && Rl.windowShouldClose())
 			close();
 	}
