@@ -100,6 +100,10 @@ class MathUtil {
 	 *  
 	 * However, values outside this range are allowed and can be used to perform extrapolation. 
 	 * If this is not desired, use bound() on the result of this function.
+	 * 
+	 * @param from The value to lerp from.
+	 * @param to The value to lerp to.
+	 * @param weight The value to lerp from.
 	 */
 	public static inline function lerp(from:Float, to:Float, weight:Float):Float {
 		return from + weight * (to - from);
