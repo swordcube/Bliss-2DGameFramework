@@ -1,5 +1,6 @@
 package bliss.engine;
 
+import bliss.engine.Camera;
 import bliss.engine.system.Vector2D;
 import bliss.engine.utilities.MathUtil;
 import bliss.backend.graphics.BlissColor;
@@ -32,6 +33,11 @@ class Object2D extends Object {
 	public var alpha(default, set):Float = 1.0;
 
 	/**
+	 * The rotation of this object (in degrees).
+	 */
+	public var angle:Float = 0;
+
+	/**
 	 * Creates a new Object2D instance.
 	 * 
 	 * @param x The X position of this new object in world space, Starts from the top left.
@@ -52,6 +58,7 @@ class Object2D extends Object {
 	 * Makes this object potentially unusable afterwards!
 	 */
 	override function destroy() {
+		super.destroy();
 		position = null;
 		size = null;
 	}

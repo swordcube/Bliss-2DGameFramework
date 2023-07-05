@@ -1,7 +1,6 @@
 package bliss.backend.input;
 
 import bliss.backend.input.Keys;
-import bliss.backend.bindings.GLFWKeyBindings;
 
 /**
  * A class to make keyboard input easier to code.

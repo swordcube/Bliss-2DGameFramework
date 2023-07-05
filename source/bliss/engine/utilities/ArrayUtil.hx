@@ -134,17 +134,17 @@ class ArrayUtil {
 	 * @param	Recursive	Whether to search for arrays inside of arr and clear them out, too
 	 */
 	public static function clearArray<T>(array:Array<T>, recursive:Bool = false):Array<T> {
-		if (array == null)
+		if(array == null)
 			return array;
 
-		if (recursive) {
+		if(recursive) {
 			while(array.length > 0) {
 				var thing:T = array.pop();
 				if((thing is Array))
 					clearArray(array, recursive);
 			}
 		} else {
-			while (array.length > 0)
+			while(array.length > 0)
 				array.pop();
 		}
 

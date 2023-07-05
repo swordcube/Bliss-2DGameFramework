@@ -224,12 +224,12 @@ class Window {
 	 */
 	@:noCompletion
 	private function update(elapsed:Float) {
-		Rl.beginDrawing(); // Listen for input
 		onUpdate.emit(elapsed);
 		if(!closed && Rl.windowShouldClose())
 			close();
-		Rl.endDrawing(); // Stop listening for input
+		Rl.pollInputEvents();
 	}
+	
 	@:noCompletion
 	private static var _windows:Array<Window> = [];
 

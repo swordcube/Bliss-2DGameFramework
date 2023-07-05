@@ -21,6 +21,8 @@ class GameObject {
 	public function render() {
 		if(scene != null)
 			scene.render();
+
+		Game.cameras.render();
 	}
 
 	public function switchScene() {

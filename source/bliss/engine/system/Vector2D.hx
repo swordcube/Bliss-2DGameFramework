@@ -47,14 +47,25 @@ abstract Vector2D(Array<Float>) from Array<Float> to Array<Float> {
     public static inline function fromRaylib(vector:Rl.Vector2) {
         return new Vector2D(vector.x, vector.y);
     }
-
+    
     /**
      * Converts this Droplet `Vector2D` into a Raylib `Vector2`.
      */
     public inline function toRaylib() {
         return Rl.Vector2.create(x, y);
     }
+    
+    /**
+     * Makes every value in this vector positive.
+     */
+    public inline function abs() {
+        for(i => val in this)
+            this[i] = Math.abs(val);
+        
+        return this;
+    }
 
+    //##-- VARIABLES/FUNCTIONS YOU NORMALLY SHOULDN'T HAVE TO TOUCH!! --##//
     @:noCompletion
     private inline function get_x():Float {
         return this[0];

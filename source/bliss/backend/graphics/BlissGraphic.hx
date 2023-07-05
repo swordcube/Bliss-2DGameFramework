@@ -48,7 +48,7 @@ class BlissGraphic {
 	public function destroy() {
 		Rl.unloadTexture(_texture);
 		_texture = null;
-		useCount = 0;
+		useCount = -1;
 	}
 
 	//##-- VARIABLES/FUNCTIONS YOU NORMALLY SHOULDN'T HAVE TO TOUCH!! --##//
@@ -68,7 +68,10 @@ class BlissGraphic {
 
 	@:noCompletion
 	private inline function set_useCount(v:Int) {
-		if(v < 1 && !persist && _texture != null) destroy();
+		if(v > -1 && v < 1 && !persist && _texture != null) {
+			Debug.log(GENERAL, "a graphic died due to not being used :(");
+			destroy();
+		}
 		return useCount = v;
 	}
 }

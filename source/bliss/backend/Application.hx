@@ -90,7 +90,7 @@ class Application {
 		if(Window._windows.length < 1)
 			Application.stop();
 
-		deltaTime = Sys.time() - oldTime;
+		deltaTime = Math.max(Sys.time() - oldTime, 0);
 	}
 
 	//##-- Used internally, please use Application.create --##//

@@ -46,6 +46,11 @@ class Game {
 	public static var graphic:GraphicFrontEnd;
 
 	/**
+	 * An simple way to add/remove cameras to the game.
+	 */
+	public static var cameras:CameraFrontEnd;
+
+	/**
 	 * The width in pixels of the game.
 	 */
 	public static var width(get, set):Int;
@@ -82,9 +87,6 @@ class Game {
 		_game._requestedScene = initialScene;
 		init();
 
-		// Setup helper managers
-		keys = new KeyboardManager();
-
 		// Allow the game to automatically update
 		var window = Application.self.window;
 		window.onUpdate.connect(_game.update);
@@ -117,7 +119,12 @@ class Game {
 
 	@:noCompletion
 	private static function init() {
+		// Setup helper managers
+		keys = new KeyboardManager();
+
+		// Setup helper frontends
 		graphic = new GraphicFrontEnd();
+		cameras = new CameraFrontEnd();
 	}
 
 	@:noCompletion

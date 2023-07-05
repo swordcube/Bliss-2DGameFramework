@@ -222,10 +222,17 @@ class Group<T:Object> extends Object {
 	 */
 	override function render() {
 		if(!visible) return;
+
+		var _realDefaultCameras:Array<Camera> = Camera.defaultCameras;
+		if(cameras != null)
+			Camera.defaultCameras = cameras;
+
 		for(object in members) {
 			if(object == null || !object.exists || !object.visible) continue;
 			object.render();
 		}
+
+		Camera.defaultCameras = _realDefaultCameras;
 	}
 
 	/**
@@ -264,6 +271,7 @@ class Group<T:Object> extends Object {
 		}
 		members = null;
 		length = 0;
+		super.destroy();
 	}
 
 	//##-- VARIABLES/FUNCTIONS YOU NORMALLY SHOULDN'T HAVE TO TOUCH!! --##//

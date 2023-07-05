@@ -65,6 +65,17 @@ abstract Rect2D(Array<Float>) from Array<Float> to Array<Float> {
         return Rl.Rectangle.create(x, y, w, h);
     }
 
+    /**
+     * Makes every value in this vector positive.
+     */
+    public inline function abs() {
+        for(i => val in this)
+            this[i] = Math.abs(val);
+        
+        return this;
+    }
+
+    //##-- VARIABLES/FUNCTIONS YOU NORMALLY SHOULDN'T HAVE TO TOUCH!! --##//
     @:noCompletion
     private inline function get_x():Float {
         return this[0];

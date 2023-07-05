@@ -1,5 +1,6 @@
 package bliss.engine;
 
+import bliss.engine.Camera;
 import bliss.engine.system.Game;
 import bliss.engine.utilities.Axes;
 import bliss.engine.system.Vector2D;
@@ -51,11 +52,6 @@ class Sprite extends Object2D {
 	public var scrollFactor:Vector2D;
 
 	/**
-	 * The rotation of this sprite (in degrees).
-	 */
-	public var angle:Float = 0;
-
-	/**
 	 * Controls whether the object is smoothed when rotated, affects performance.
 	 */
 	public var antialiasing(default, set):Bool;
@@ -74,10 +70,11 @@ class Sprite extends Object2D {
 		origin = new Vector2D(0, 0);
 		offset = new Vector2D(0, 0);
 		scrollFactor = new Vector2D(1, 1);
-		antialiasing = defaultAntialiasing;
 
 		if(presetGraphic != null)
 			loadGraphic(presetGraphic);
+
+		antialiasing = defaultAntialiasing;
 	}
 
 	/**
@@ -120,35 +117,10 @@ class Sprite extends Object2D {
 	override function render() {
 		if(alpha == 0) return;
 
-		@:privateAccess
-		var _rawTexture:Rl.Texture2D = cast(graphic._texture, Rl.Texture2D);
-
-		var _ot:Float = tint.alphaFloat;
-		tint.alphaFloat = alpha;
-
-		_renderSpritePos.set(
-			position.x + ((origin.x * scale.x) + (-0.5 * ((size.x * Math.abs(scale.x)) - size.x))),
-			position.y + ((origin.y * scale.y) + (-0.5 * ((size.y * Math.abs(scale.y)) - size.y)))
-		);
-
-		Rl.drawTexturePro(
-			_rawTexture,
-			Rl.Rectangle.create(
-				0, 0,
-				_rawTexture.width * (scale.x < 0 ? -1 : 1),
-				_rawTexture.height * (scale.y < 0 ? -1 : 1)
-			),
-			Rl.Rectangle.create(
-				_renderSpritePos.x, _renderSpritePos.y,
-				_rawTexture.width * Math.abs(scale.x), 
-				_rawTexture.height * Math.abs(scale.y)
-			),
-			(origin * scale).toRaylib(),
-			angle,
-			tint.toRaylib()
-		);
-
-		tint.alphaFloat = _ot;
+		for(camera in cameras) {
+			@:privateAccess
+			camera._queuedRenders.push(() -> renderComplex(camera));
+		}
 	}
 
 	/**
@@ -179,11 +151,49 @@ class Sprite extends Object2D {
 		var texture:Rl.Texture2D = graphic?._texture ?? null;
 
 		if(texture != null)
-			Rl.setTextureFilter(texture, (v) ? 1 : 0);
+			Rl.setTextureFilter(texture, v ? 1 : 0);
 
 		return antialiasing = v;
 	}
 
 	@:noCompletion
 	private var _renderSpritePos:Vector2D = new Vector2D(0, 0);
+
+	@:noCompletion
+	private function renderComplex(camera:Camera) {
+		// If the graphic or it's internal texture are somehow null,
+		// Don't try to render
+		@:privateAccess
+		if(graphic?._texture == null) return;
+
+		@:privateAccess
+		var _rawTexture:Rl.Texture2D = cast(graphic._texture, Rl.Texture2D);
+
+		var _ot:Float = tint.alphaFloat;
+		tint.alphaFloat = alpha;
+
+		_renderSpritePos.set(
+			position.x + ((origin.x * scale.x) + (-0.5 * ((size.x * Math.abs(scale.x)) - size.x))),
+			position.y + ((origin.y * scale.y) + (-0.5 * ((size.y * Math.abs(scale.y)) - size.y)))
+		);
+
+		Rl.drawTexturePro(
+			_rawTexture,
+			Rl.Rectangle.create(
+				0, 0,
+				_rawTexture.width * (scale.x < 0 ? -1 : 1),
+				_rawTexture.height * (scale.y < 0 ? -1 : 1)
+			),
+			Rl.Rectangle.create(
+				_renderSpritePos.x, _renderSpritePos.y,
+				_rawTexture.width * Math.abs(scale.x), 
+				_rawTexture.height * Math.abs(scale.y)
+			),
+			(origin * scale.abs()).toRaylib(),
+			angle,
+			tint.toRaylib()
+		);
+
+		tint.alphaFloat = _ot;
+	}
 }
