@@ -93,6 +93,21 @@ class Sprite extends Object2D {
 	}
 
 	/**
+	 * Helper function that adjusts the offset automatically to center the bounding box within the graphic.
+	 *
+	 * @param adjustPosition Adjusts the actual X and Y position just once to match the offset change.
+	 */
+	public function centerOffsets(adjustPosition:Bool = false):Void {
+		offset.x = (size.x - (size.x * scale.x)) * (flipOffsets ? 0.5 : -0.5);
+		offset.y = (size.x - (size.y * scale.y)) * (flipOffsets ? 0.5 : -0.5);
+
+		if(adjustPosition) {
+			position.x -= offset.x * (flipOffsets ? -1 : 1);
+			position.y -= offset.y * (flipOffsets ? -1 : 1);
+		}
+	}
+
+	/**
 	 * Sets the sprite's origin to its center - useful after adjusting
 	 * `scale` to make sure rotations work as expected.
 	 */
@@ -133,6 +148,7 @@ class Sprite extends Object2D {
 		scale = null;
 		origin = null;
 		offset = null;
+		_renderSpritePos = null;
 		super.destroy();
 	}
 
@@ -161,10 +177,12 @@ class Sprite extends Object2D {
 
 	@:noCompletion
 	private function renderComplex(camera:Camera) {
-		// If the graphic or it's internal texture are somehow null,
-		// Don't try to render
+		// If the graphic or it's internal texture are somehow null
+		// or the sprite is off screen or the attached camera's
+		// zoom is 0, Don't try to render.
 		@:privateAccess
-		if(graphic?._texture == null) return;
+		if(graphic?._texture == null || !camera.isOnScreen(this) || camera.zoom.x == 0 || camera.zoom.y == 0)
+			return;
 
 		@:privateAccess
 		var _rawTexture:Rl.Texture2D = cast(graphic._texture, Rl.Texture2D);
@@ -181,15 +199,16 @@ class Sprite extends Object2D {
 			_rawTexture,
 			Rl.Rectangle.create(
 				0, 0,
-				_rawTexture.width * (scale.x < 0 ? -1 : 1),
-				_rawTexture.height * (scale.y < 0 ? -1 : 1)
+				_rawTexture.width * (scale.x < 0 ? -1 : 1) * (camera.zoom.x < 0 ? -1 : 1),
+				_rawTexture.height * (scale.y < 0 ? -1 : 1) * (camera.zoom.x < 0 ? -1 : 1)
 			),
 			Rl.Rectangle.create(
-				_renderSpritePos.x, _renderSpritePos.y,
-				_rawTexture.width * Math.abs(scale.x), 
-				_rawTexture.height * Math.abs(scale.y)
+				(_renderSpritePos.x * camera.zoom.x) - ((Game.width * (1 - camera.zoom.x)) * -0.5), 
+				_renderSpritePos.y * camera.zoom.y - ((Game.height * (1 - camera.zoom.y)) * -0.5), 
+				_rawTexture.width * Math.abs(scale.x) * Math.abs(camera.zoom.x), 
+				_rawTexture.height * Math.abs(scale.y) * Math.abs(camera.zoom.y)
 			),
-			(origin * scale.abs()).toRaylib(),
+			(origin * scale.abs() * camera.zoom.abs()).toRaylib(),
 			angle,
 			tint.toRaylib()
 		);

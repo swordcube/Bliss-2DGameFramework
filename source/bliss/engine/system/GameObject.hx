@@ -16,6 +16,8 @@ class GameObject {
 
 		if(scene != null)
 			scene.update(elapsed);
+
+		Game.cameras.update(elapsed);
 	}
 
 	public function render() {

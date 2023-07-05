@@ -52,6 +52,18 @@ class CameraFrontEnd {
 	}
 
 	/**
+	 * Updates every added camera.
+	 * 
+	 * @param elapsed The time in seconds between the last and current frame.
+	 */
+	public function update(elapsed:Float) {
+		for(camera in _cameras) {
+			if(camera == null) continue;
+			camera.update(elapsed);
+		}
+	}
+
+	/**
 	 * Renders every camera to the game window.
 	 */
 	public function render() {
