@@ -51,7 +51,7 @@ abstract Rect2D(Array<Float>) from Array<Float> to Array<Float> {
     }
 
     /**
-     * Converts a Raylib `Rectangle` and turns it into a Droplet `Rect2D`.
+     * Converts a Raylib `Rectangle` and turns it into a Bliss `Rect2D`.
      * @param vector The Raylib `Rectangle` to convert.
      */
     public static inline function fromRaylib(rect:Rl.Rectangle) {
@@ -59,7 +59,7 @@ abstract Rect2D(Array<Float>) from Array<Float> to Array<Float> {
     }
 
     /**
-     * Converts this Droplet `Rect2D` into a Raylib `Rectangle`.
+     * Converts this Bliss `Rect2D` into a Raylib `Rectangle`.
      */
     public inline function toRaylib() {
         return Rl.Rectangle.create(x, y, w, h);
