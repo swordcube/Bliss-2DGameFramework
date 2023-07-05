@@ -13,6 +13,17 @@ class Object {
 	public var visible:Bool = true;
 
 	/**
+	 * Useful state for many game objects - "dead" (`!alive`) vs `alive`. `kill()` and
+	 * `revive()` both flip this switch (along with `exists`, but you can override that).
+	 */
+	public var alive:Bool = true;
+
+	/**
+	 * Whether or not `update()` and `render()` are automatically called by scenes or groups.
+	 */
+	public var exists:Bool = true;
+
+	/**
 	 * Creates a new Object instance.
 	 */
 	public function new() {}
@@ -28,6 +39,24 @@ class Object {
 	 * The function that renders this object to the screen.
 	 */
 	public function render() {}
+
+	/**
+	 * Kills this object and makes it unable to update or render
+	 * instantly. Call `revive()` to instantly restore those abilities.
+	 */
+	public function kill() {
+		alive = false;
+		exists = false;
+	}
+
+	/**
+	 * Revives this object and makes it able to update or render
+	 * again instantly. Call `kill()` to instantly remove those abilities.
+	 */
+	public function revive() {
+		alive = true;
+		exists = true;
+	}
 
 	/**
 	 * Destroys this object.

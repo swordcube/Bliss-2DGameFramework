@@ -62,7 +62,7 @@ abstract Rect2D(Array<Float>) from Array<Float> to Array<Float> {
      * Converts this Droplet `Rect2D` into a Raylib `Rectangle`.
      */
     public inline function toRaylib() {
-        return Rl.Rectangle.create(this[0], this[1], this[2], this[3]);
+        return Rl.Rectangle.create(x, y, w, h);
     }
 
     @:noCompletion

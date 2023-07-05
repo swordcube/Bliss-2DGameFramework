@@ -7,7 +7,6 @@ class Main {
 	static function main() {
 		// Set project settings
 		Project.windowTitle = "Bliss Testing Project";
-		Project.windowBGColor = bliss.backend.graphics.BlissColor.COLOR_CYAN;
 		Project.windowWidth = 1280;
 		Project.windowHeight = 720;
 

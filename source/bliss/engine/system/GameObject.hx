@@ -14,10 +14,13 @@ class GameObject {
 		if(scene != _requestedScene)
 			switchScene();
 
-		if(scene != null) {
+		if(scene != null)
 			scene.update(elapsed);
+	}
+
+	public function render() {
+		if(scene != null)
 			scene.render();
-		}
 	}
 
 	public function switchScene() {

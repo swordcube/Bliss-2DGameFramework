@@ -1,7 +1,11 @@
 package bliss.backend;
 
 import bliss.Project;
+import bliss.engine.system.Game;
+import bliss.engine.system.Rect2D;
+import bliss.engine.system.Vector2D;
 import bliss.engine.utilities.Signal;
+import bliss.engine.utilities.MathUtil;
 import bliss.backend.graphics.BlissColor;
 
 class Window {
@@ -95,6 +99,9 @@ class Window {
 		Rl.initWindow(Std.int(_width), Std.int(_height), "...");
 		Rl.setWindowState(Rl.ConfigFlags.WINDOW_RESIZABLE);
 		// ^ -- raylib stuff
+
+		// adjust to work with other renderers ig lol!
+		_renderTexture = Rl.loadRenderTexture(_width, _height);
 	}
 
 	/**
@@ -175,9 +182,39 @@ class Window {
 	 */
 	@:noCompletion
 	private function render() {
+		// NOTE TO ANYONE PASSING BY: i'm doing this silly little variable here
+		// to workaround hxcpp c++ compiler errors
+		var renderTexture:Rl.Texture2D = cast(_renderTexture.texture, Rl.Texture2D);
+
+		switch(Game.scaleMode) {
+			case FILL:
+				renderTexture.width = width;
+				renderTexture.height = height;
+
+			default:
+				renderTexture.width = Game.width;
+				renderTexture.height = Game.height;
+		}
+		Rl.beginDrawing();
+
+		Rl.beginTextureMode(_renderTexture);
 		Rl.clearBackground(clearColor.toRaylib());
+
 		onRender.emit();
-		Rl.endDrawing(); // This function in raylib stops obtaining inputs and drawing. Remove for other renderers.
+		Rl.endTextureMode();
+
+		// Render the window contents
+		var destRect = MathUtil.letterBoxRectangle(
+			new Vector2D(renderTexture.width, renderTexture.height),
+			new Rect2D(
+				0.0, 0.0,
+				width, height
+			)
+		);
+		_renderBars(renderTexture, destRect);
+		_renderContents(renderTexture, destRect);
+
+		Rl.endDrawing();
 	}
 
 	/**
@@ -187,10 +224,11 @@ class Window {
 	 */
 	@:noCompletion
 	private function update(elapsed:Float) {
-		Rl.beginDrawing(); // This function in raylib starts obtaining inputs and drawing. Remove for other renderers.
+		Rl.beginDrawing(); // Listen for input
 		onUpdate.emit(elapsed);
 		if(!closed && Rl.windowShouldClose())
 			close();
+		Rl.endDrawing(); // Stop listening for input
 	}
 	@:noCompletion
 	private static var _windows:Array<Window> = [];
@@ -235,7 +273,7 @@ class Window {
 
 	@:noCompletion
 	private function get_width():Int {
-		return _width;
+		return Rl.getScreenWidth();
 	}
 
 	@:noCompletion
@@ -246,7 +284,7 @@ class Window {
 
 	@:noCompletion
 	private function get_height():Int {
-		return _height;
+		return Rl.getScreenHeight();
 	}
 
 	@:noCompletion
@@ -266,5 +304,61 @@ class Window {
 	private function set_framerate(v:Int):Int {
 		Rl.setTargetFPS(v);
 		return framerate = v;
+	}
+
+	@:noCompletion
+	private var _renderTexture:Rl.RenderTexture2D;
+
+	@:noCompletion
+	private inline function _renderBars(renderTexture:Rl.Texture2D, destRect:Rl.Rectangle) {
+		switch(Game.scaleMode) {
+			case FIXED:
+				// left and right
+				if(destRect.x > 0) {
+					Rl.drawRectangle(
+						0, 0, 
+						Std.int(destRect.x) + 1, height + 1, 
+						Rl.Colors.BLACK
+					);
+
+					Rl.drawRectangle(
+						Std.int(destRect.x + destRect.width), 0, 
+						Std.int(destRect.x) + 1, height + 1, 
+						Rl.Colors.BLACK
+					);
+				}
+
+				// top and bottom
+				if(destRect.y > 0) {
+					Rl.drawRectangle(
+						0, 0, 
+						width, Std.int(destRect.y) + 1, 
+						Rl.Colors.BLACK
+					);
+
+					Rl.drawRectangle(
+						0, Std.int(destRect.y + destRect.height), 
+						width, Std.int(destRect.y) + 1, 
+						Rl.Colors.BLACK
+					);
+				}
+
+			default: // nah
+		}
+	}
+
+	@:noCompletion
+	private inline function _renderContents(renderTexture:Rl.Texture2D, destRect:Rl.Rectangle) {
+		Rl.drawTexturePro(
+			renderTexture, 
+			Rl.Rectangle.create(
+				0.0, renderTexture.height, 
+				renderTexture.width, -renderTexture.height
+			),
+			destRect,
+			Rl.Vector2.zero(), 
+			0.0, 
+			Rl.Colors.WHITE
+		);
 	}
 }

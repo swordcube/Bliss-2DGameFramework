@@ -1,9 +1,15 @@
 package bliss.engine;
 
 import bliss.backend.Debug;
+import bliss.engine.utilities.ArrayUtil;
 
 class Group<T:Object> extends Object {
 	public var members:Array<T> = [];
+
+	/**
+	 * The maximum capacity of this group. Default is `0`, meaning no max capacity, and the group can just grow.
+	 */
+	public var maxSize(default, set):Int;
 
 	/**
 	 * The length of this group.
@@ -12,6 +18,15 @@ class Group<T:Object> extends Object {
 	 * for better safety and performance!
 	 */
 	public var length:Int = 0;
+
+	/**
+	 * Creates a new Group instance.
+	 * @param maxSize The maximum amount of members allowed in this group
+	 */
+	public function new(maxSize:Int = 0) {
+		super();
+		maxSize = Std.int(Math.abs(maxSize));
+	}
 
 	/**
 	 * Adds an object to this group.
@@ -34,6 +49,9 @@ class Group<T:Object> extends Object {
 			return object;
 		}
 
+		if(maxSize > 0 && length >= maxSize)
+			return object;
+
 		members.push(object);
 		length++;
 
@@ -55,6 +73,9 @@ class Group<T:Object> extends Object {
 			members[position] = object;
 			return object;
 		}
+
+		if(maxSize > 0 && length >= maxSize)
+			return object;
 
 		members.insert(position, object);
 		length++;
@@ -98,6 +119,92 @@ class Group<T:Object> extends Object {
 	}
 
 	/**
+	 * Call this function to retrieve the first object with `exists == false` in the group.
+	 * This is handy for recycling in general, e.g. respawning enemies.
+	 *
+	 * @param   objectClass   An optional parameter that lets you narrow the
+	 *                        results to instances of this particular class.
+	 * @param   force         Force the object to be an `ObjectClass` and not a super class of `ObjectClass`.
+	 */
+	public function getFirstAvailable(?objectClass:Class<T>, force:Bool = false):T {
+		var i:Int = 0;
+		var object:Object = null;
+
+		while(i < length) {
+			object = members[i++];
+
+			if(object != null && !object.exists && (objectClass == null || Std.isOfType(object, objectClass))) {
+				if(force && Type.getClassName(Type.getClass(object)) != Type.getClassName(objectClass))
+					continue;
+				
+				return members[i - 1];
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Recycling is designed to help you reuse game objects without always re-allocating or "newing" them.
+	 * It behaves differently depending on whether `maxSize` equals `0` or is bigger than `0`.
+	 *
+	 * `maxSize > 0` / "rotating-recycling"
+	 *   - at capacity:  returns the next object in line.
+	 *   - otherwise:    returns a new object.
+	 *
+	 * `maxSize == 0` / "grow-style-recycling"
+	 *   - tries to find the first object that isn't null
+	 *   - otherwise: adds a new object to the `members` array
+	 *
+	 * WARNING: If this function needs to create a new object, and no object class was provided,
+	 * it will return `null` instead of a valid object!
+	 *
+	 * @param   objectClass     The class type you want to recycle (e.g. `Sprite`, `EvilRobot`, etc).
+	 * @param   objectFactory   Optional factory function to create a new object
+	 *                          if there aren't any dead members to recycle.
+	 *                          If `null`, `Type.createInstance()` is used,
+	 *                          which requires the class to have no constructor parameters.
+	 * @param   force           Force the object to be an `ObjectClass` and not a super class of `ObjectClass`.
+	 * @param   revive          Whether recycled members should automatically be revived
+	 *                          (by calling `revive()` on them).
+	 */
+	public function recycle(?objectClass:Class<T>, ?objectFactory:Void->T, force:Bool = false, revive:Bool = true) {
+		var object:Object = null;
+
+		// Rotated recycling
+		if(maxSize > 0) {
+			// Create new instance
+			if(length < maxSize)
+				return recycleCreateObject(objectClass, objectFactory);
+			
+			// Get the next member if at capacity
+			else {
+				object = members[_marker++];
+
+				if(_marker >= maxSize)
+					_marker = 0;
+
+				if(revive)
+					object.revive();
+
+				return cast object;
+			}
+		}
+		// Grow-style recycling - Grab the first non-null object or create a new one
+		else {
+			object = getFirstAvailable(objectClass, force);
+
+			if(object != null) {
+				if(revive)
+					object.revive();
+				return cast object;
+			}
+
+			return recycleCreateObject(objectClass, objectFactory);
+		}
+	}
+
+	/**
 	 * The function that updates this group.
 	 * 
 	 * @param elapsed The time in seconds between the last and current frame.
@@ -105,7 +212,7 @@ class Group<T:Object> extends Object {
 	override function update(elapsed:Float) {
 		if(!active) return;
 		for(object in members) {
-			if(object == null || !object.active) continue;
+			if(object == null || !object.exists || !object.active) continue;
 			object.update(elapsed);
 		}
 	}
@@ -116,9 +223,32 @@ class Group<T:Object> extends Object {
 	override function render() {
 		if(!visible) return;
 		for(object in members) {
-			if(object == null || !object.visible) continue;
+			if(object == null || !object.exists || !object.visible) continue;
 			object.render();
 		}
+	}
+
+	/**
+	 * Calls `kill()` on the group's `members` and then on the group itself.
+	 * You can revive this group later via `revive()` after this.
+	 */
+	override function kill() {
+		for(object in members) {
+			if(object == null || !object.exists) continue;
+			object.kill();
+		}
+		super.kill();
+	}
+
+	/**
+	 * Calls `revive()` on the group's members and then on the group itself.
+	 */
+	override function revive() {
+		for(object in members) {
+			if(object == null || object.exists) continue;
+			object.revive();
+		}
+		super.revive();
 	}
 
 	/**
@@ -134,5 +264,52 @@ class Group<T:Object> extends Object {
 		}
 		members = null;
 		length = 0;
+	}
+
+	//##-- VARIABLES/FUNCTIONS YOU NORMALLY SHOULDN'T HAVE TO TOUCH!! --##//
+	/**
+	 * Internal helper variable for recycling objects.
+	 */
+	@:noCompletion
+	private var _marker:Int = 0;
+
+	@:noCompletion
+	private inline function recycleCreateObject(?objectClass:Class<T>, ?objectFactory:Void->T):T {
+		var object:T = null;
+
+		if (objectFactory != null)
+			add(object = objectFactory());
+		else if (objectClass != null)
+			add(object = Type.createInstance(objectClass, []));
+
+		return object;
+	}
+
+	@:noCompletion
+	private function set_maxSize(size:Int):Int {
+		maxSize = Std.int(Math.abs(size));
+
+		if(_marker >= maxSize)
+			_marker = 0;
+
+		if(maxSize == 0 || members == null || maxSize >= length)
+			return maxSize;
+
+		// If the max size has shrunk, we need to get rid of some objects
+		var i:Int = maxSize;
+		var l:Int = length;
+		var object:Object = null;
+
+		while(i < l) {
+			object = members[i++];
+
+			if(object != null)
+				object.destroy();
+		}
+
+		ArrayUtil.setLength(members, maxSize);
+		length = members.length;
+
+		return maxSize;
 	}
 }

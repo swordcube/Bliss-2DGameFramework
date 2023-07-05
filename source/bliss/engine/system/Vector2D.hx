@@ -52,7 +52,7 @@ abstract Vector2D(Array<Float>) from Array<Float> to Array<Float> {
      * Converts this Droplet `Vector2D` into a Raylib `Vector2`.
      */
     public inline function toRaylib() {
-        return Rl.Vector2.create(this[0], this[1]);
+        return Rl.Vector2.create(x, y);
     }
 
     @:noCompletion
