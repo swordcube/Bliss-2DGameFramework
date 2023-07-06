@@ -28,6 +28,9 @@ class GameObject {
 	}
 
 	public function switchScene() {
+		// Reset cameras list
+		Game.cameras.reset();
+		
 		// Destroy old scene if possible
 		if(scene != null)
 			scene.destroy();

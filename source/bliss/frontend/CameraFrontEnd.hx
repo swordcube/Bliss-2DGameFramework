@@ -38,6 +38,21 @@ class CameraFrontEnd {
 	}
 
 	/**
+	 * Inserts a camera to the list of cameras that can update and render
+	 * at a specific position.
+	 * 
+	 * @param camera The camera to insert.
+	 */
+	public function insert(position:Int, camera:Camera) {
+		if(_cameras.contains(camera)) {
+			Debug.log(WARNING, "This camera has already been added!");
+			return camera;
+		}
+		_cameras.insert(position, camera);
+		return camera;
+	}
+
+	/**
 	 * Removes a camera from the list of cameras that can update and render.
 	 * 
 	 * @param camera The camera to remove.
@@ -74,9 +89,7 @@ class CameraFrontEnd {
 	}
 
 	//##-- VARIABLES/FUNCTIONS YOU NORMALLY SHOULDN'T HAVE TO TOUCH!! --##//
-	public function new() {
-		reset();
-	}
+	public function new() {}
 
 	@:noCompletion
 	private var _cameras:Array<Camera> = [];

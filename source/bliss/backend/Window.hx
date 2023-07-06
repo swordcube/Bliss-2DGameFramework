@@ -318,13 +318,13 @@ class Window {
 					Rl.drawRectangle(
 						0, 0, 
 						Std.int(destRect.x) + 1, height + 1, 
-						Rl.Colors.BLACK
+						clearColor.toRaylib()
 					);
 
 					Rl.drawRectangle(
 						Std.int(destRect.x + destRect.width), 0, 
 						Std.int(destRect.x) + 1, height + 1, 
-						Rl.Colors.BLACK
+						clearColor.toRaylib()
 					);
 				}
 
@@ -333,13 +333,13 @@ class Window {
 					Rl.drawRectangle(
 						0, 0, 
 						width, Std.int(destRect.y) + 1, 
-						Rl.Colors.BLACK
+						clearColor.toRaylib()
 					);
 
 					Rl.drawRectangle(
 						0, Std.int(destRect.y + destRect.height), 
 						width, Std.int(destRect.y) + 1, 
-						Rl.Colors.BLACK
+						clearColor.toRaylib()
 					);
 				}
 
