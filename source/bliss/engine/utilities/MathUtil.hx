@@ -95,20 +95,18 @@ class MathUtil {
 	}
 
 	/**
-	 * Returns the linear interpolation of two numbers if `ratio`
-	 * is between 0 and 1, and the linear extrapolation otherwise.
-	 *
-	 * Examples:
-	 *
-	 * ```haxe
-	 * lerp(a, b, 0) = a
-	 * lerp(a, b, 1) = b
-	 * lerp(5, 15, 0.5) = 10
-	 * lerp(5, 15, -1) = -5
-	 * ```
+	 * Linearly interpolates between two values by the factor defined in weight. 
+	 * To perform interpolation, weight should be between 0.0 and 1.0 (inclusive).
+	 *  
+	 * However, values outside this range are allowed and can be used to perform extrapolation. 
+	 * If this is not desired, use bound() on the result of this function.
+	 * 
+	 * @param from The value to lerp from.
+	 * @param to The value to lerp to.
+	 * @param weight The value to lerp from.
 	 */
-	public static inline function lerp(a:Float, b:Float, ratio:Float):Float {
-		return a + ratio * (b - a);
+	public static inline function lerp(from:Float, to:Float, weight:Float):Float {
+		return from + weight * (to - from);
 	}
 
 	/**

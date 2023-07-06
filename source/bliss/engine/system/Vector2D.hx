@@ -41,7 +41,7 @@ abstract Vector2D(Array<Float>) from Array<Float> to Array<Float> {
     }
 
     /**
-     * Converts a Raylib `Vector2` and turns it into a Droplet `Vector2D`.
+     * Converts a Raylib `Vector2` and turns it into a Bliss `Vector2D`.
      * @param vector The Raylib `Vector2` to convert.
      */
     public static inline function fromRaylib(vector:Rl.Vector2) {
@@ -49,7 +49,7 @@ abstract Vector2D(Array<Float>) from Array<Float> to Array<Float> {
     }
     
     /**
-     * Converts this Droplet `Vector2D` into a Raylib `Vector2`.
+     * Converts this Bliss `Vector2D` into a Raylib `Vector2`.
      */
     public inline function toRaylib() {
         return Rl.Vector2.create(x, y);
