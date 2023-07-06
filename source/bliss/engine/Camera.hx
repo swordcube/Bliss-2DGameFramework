@@ -2,6 +2,7 @@ package bliss.engine;
 
 import bliss.engine.system.Game;
 import bliss.engine.system.Vector2D;
+import bliss.engine.utilities.MathUtil;
 
 using bliss.engine.utilities.ArrayUtil;
 
@@ -33,6 +34,31 @@ class Camera extends Object2D {
             (sprite.position.x > ((Game.width + Math.abs((sprite.size.x * sprite.scale.x) * 2)) / zoom.x)) ||
             (sprite.position.y > ((Game.height + Math.abs((sprite.size.y * sprite.scale.y) * 2)) / zoom.y)));
     }
+
+	/**
+	 * Adjusts the given position to render properly with the camera's properties.
+	 * 
+	 * @param position The position to adjust.
+	 */
+	public function adjustToCamera(position:Vector2D) {
+		var radians = (angle % 360) / 180 * MathUtil.FULL_PI;
+		var cosMult = Math.cos(radians);
+		var sinMult = Math.sin(radians);
+
+		var centerPos = new Vector2D(Game.width * 0.5, Game.height * 0.5);
+		
+		var newPos = new Vector2D(
+			(position.x * zoom.x) - ((Game.width * (1 - zoom.x)) * -0.5) - centerPos.x, 
+			(position.y * zoom.y) - ((Game.height * (1 - zoom.y)) * -0.5) - centerPos.y
+		);
+		newPos.set(
+			newPos.x * cosMult + newPos.y * -sinMult,
+			newPos.x * sinMult + newPos.y * cosMult
+		);
+		newPos += centerPos;
+
+		return newPos;
+	}
 
 	/**
 	 * The function that updates this camera.

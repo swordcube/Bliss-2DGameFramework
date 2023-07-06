@@ -3,6 +3,7 @@ package bliss.engine;
 import bliss.engine.Camera;
 import bliss.engine.system.Game;
 import bliss.engine.utilities.Axes;
+import bliss.engine.utilities.MathUtil;
 import bliss.engine.system.Vector2D;
 import bliss.backend.graphics.BlissGraphic;
 
@@ -184,6 +185,17 @@ class Sprite extends Object2D {
 		if(graphic?._texture == null || !camera.isOnScreen(this) || camera.zoom.x == 0 || camera.zoom.y == 0)
 			return;
 
+		var radians = (angle % 360) * MathUtil.FULL_PI / 180;
+		var cosMult = Math.cos(radians);
+		var sinMult = Math.sin(radians);
+
+		var ogAngle:Float = angle;
+		angle += camera.angle;
+		angle %= 360;
+
+		var absScale:Vector2D = scale.abs();
+		var absZoom:Vector2D = camera.zoom.abs();
+
 		@:privateAccess
 		var _rawTexture:Rl.Texture2D = cast(graphic._texture, Rl.Texture2D);
 
@@ -191,9 +203,14 @@ class Sprite extends Object2D {
 		tint.alphaFloat = alpha;
 
 		_renderSpritePos.set(
-			position.x + ((origin.x * scale.x) + (-0.5 * ((size.x * Math.abs(scale.x)) - size.x))),
-			position.y + ((origin.y * scale.y) + (-0.5 * ((size.y * Math.abs(scale.y)) - size.y)))
+			position.x + ((origin.x * scale.x) + (-0.5 * ((size.x * absScale.x) - size.x))),
+			position.y + ((origin.y * scale.y) + (-0.5 * ((size.y * absScale.y) - size.y)))
 		);
+
+		_renderSpritePos.x += (offset.x * absScale.x) * cosMult + (offset.y * absScale.y) * -sinMult;
+		_renderSpritePos.y += (offset.x * absScale.x) * sinMult + (offset.y * absScale.y) * cosMult;
+
+		var _finalRenderPos:Vector2D = camera.adjustToCamera(_renderSpritePos);
 
 		Rl.drawTexturePro(
 			_rawTexture,
@@ -203,16 +220,18 @@ class Sprite extends Object2D {
 				_rawTexture.height * (scale.y < 0 ? -1 : 1) * (camera.zoom.x < 0 ? -1 : 1)
 			),
 			Rl.Rectangle.create(
-				(_renderSpritePos.x * camera.zoom.x) - ((Game.width * (1 - camera.zoom.x)) * -0.5), 
-				_renderSpritePos.y * camera.zoom.y - ((Game.height * (1 - camera.zoom.y)) * -0.5), 
-				_rawTexture.width * Math.abs(scale.x) * Math.abs(camera.zoom.x), 
-				_rawTexture.height * Math.abs(scale.y) * Math.abs(camera.zoom.y)
+				_finalRenderPos.x, 
+				_finalRenderPos.y, 
+				_rawTexture.width * absScale.x * absZoom.x, 
+				_rawTexture.height * absScale.y * absZoom.y
 			),
-			(origin * scale.abs() * camera.zoom.abs()).toRaylib(),
+			(origin * absScale * absZoom).toRaylib(),
 			angle,
 			tint.toRaylib()
 		);
 
 		tint.alphaFloat = _ot;
+
+		angle = ogAngle;
 	}
 }

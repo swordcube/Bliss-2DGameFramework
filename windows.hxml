@@ -11,5 +11,6 @@
 
 -cpp bin/cpp
 -cmd cd bin/cpp
--cmd ./Main
+-cmd Main.exe
+-cmd echo cum.
 -cmd cd ../../
