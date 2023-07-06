@@ -35,6 +35,12 @@ class Game {
 	public static var elapsed(get, never):Float;
 
 	/**
+	 * The framerate the game window goes to when said
+	 * window is unfocused.
+	 */
+	public static var focusLostFramerate:Int = 10;
+
+	/**
 	 * The kind of scaling that should be applied to the game
 	 * when rendering onto the window.
 	 */
@@ -87,10 +93,23 @@ class Game {
 		_game._requestedScene = initialScene;
 		init();
 
-		// Allow the game to automatically update
+		// Allow the game to automatically update and render
 		var window = Application.self.window;
 		window.onUpdate.connect(_game.update);
 		window.onRender.connect(_game.render);
+
+		// Allow the game to pause/resume based on if
+		// the window is focused/unfocused.
+		window.onFocusIn.connect(() -> {
+			@:privateAccess
+			window._updateFramerate(window.framerate);
+			window.active = true;
+		});
+		window.onFocusOut.connect(() -> {
+			@:privateAccess
+			window._updateFramerate(Game.focusLostFramerate);
+			window.active = false;
+		});
 
 		// Starts the application, thus allowing windows
 		// to update and render.

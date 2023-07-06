@@ -84,6 +84,7 @@ class Application {
 			if(!running) break;
 
 			window.update(deltaTime);
+
 			if(!window.closed)
 				window.render();
 		}

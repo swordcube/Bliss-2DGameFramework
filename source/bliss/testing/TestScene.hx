@@ -4,6 +4,7 @@ import bliss.engine.Scene;
 import bliss.engine.Sprite;
 import bliss.engine.Camera;
 import bliss.engine.system.Game;
+import bliss.engine.system.Vector2D;
 import bliss.backend.graphics.BlissColor;
 
 class TestScene extends Scene {
@@ -23,9 +24,11 @@ class TestScene extends Scene {
 		test.centerOrigin();
 		test.tint = BlissColor.COLOR_LIME;
 
-		add(test2 = new Sprite(150, 150, "assets/haxe.png"));
+		add(test2 = new Sprite(0, 0, "assets/haxe.png"));
 		test2.scale.set(0.3, 0.3);
 		test2.centerOrigin();
+		test2.screenCenter();
+		test2.position -= new Vector2D(60, 60);
 		test2.camera = newCam;
 	}
 

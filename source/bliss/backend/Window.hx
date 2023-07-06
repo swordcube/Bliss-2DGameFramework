@@ -40,6 +40,11 @@ class Window {
 	}
 
 	/**
+	 * Whether or not this window is able to automatically update.
+	 */
+	public var active:Bool = true;
+
+	/**
 	 * Whether or not this window has been closed.
 	 */
 	public var closed:Bool = false;
@@ -176,6 +181,16 @@ class Window {
 	 */
 	public var onRestore:Signal = new Signal();
 
+	/**
+	 * The signal that gets ran when the window is refocused.
+	 */
+	public var onFocusIn:Signal = new Signal();
+
+	/**
+	 * The signal that gets ran when the window is unfocused.
+	 */
+	public var onFocusOut:Signal = new Signal();
+
 	//##-- VARIABLES & FUNCTIONS THAT NORMALLY SHOULDN'T BE TOUCHED --##//
 	/**
 	 * Renders this window.
@@ -224,9 +239,20 @@ class Window {
 	 */
 	@:noCompletion
 	private function update(elapsed:Float) {
-		onUpdate.emit(elapsed);
+		if(active)
+			onUpdate.emit(elapsed);
+
 		if(!closed && Rl.windowShouldClose())
 			close();
+
+		if(_focused != Rl.isWindowFocused()) {
+			_focused = Rl.isWindowFocused();
+			if(_focused)
+				onFocusIn.emit();
+			else
+				onFocusOut.emit();
+		}
+
 		Rl.pollInputEvents();
 	}
 	
@@ -272,6 +298,12 @@ class Window {
 	private var _height:Int;
 
 	@:noCompletion
+	private var _renderTexture:Rl.RenderTexture2D;
+
+	@:noCompletion
+	private var _focused:Bool = true;
+
+	@:noCompletion
 	private function get_width():Int {
 		return Rl.getScreenWidth();
 	}
@@ -301,13 +333,15 @@ class Window {
 	}
 
 	@:noCompletion
-	private function set_framerate(v:Int):Int {
-		Rl.setTargetFPS(v);
-		return framerate = v;
+	private function _updateFramerate(framerate:Int) {
+		Rl.setTargetFPS(framerate);
 	}
 
 	@:noCompletion
-	private var _renderTexture:Rl.RenderTexture2D;
+	private function set_framerate(v:Int):Int {
+		_updateFramerate(v);
+		return framerate = v;
+	}
 
 	@:noCompletion
 	private inline function _renderBars(renderTexture:Rl.Texture2D, destRect:Rl.Rectangle) {

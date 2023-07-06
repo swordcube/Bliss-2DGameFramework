@@ -1,47 +1,165 @@
 package bliss.engine.system;
 
-abstract Vector2D(Array<Float>) from Array<Float> to Array<Float> {
-    public var x(get, set):Float;
-    public var y(get, set):Float;
+@:forward abstract Vector2D(BaseVector2D) to BaseVector2D from BaseVector2D {
+    public static var ZERO(default, never):Vector2D = new Vector2D(0, 0);
 
-    public function new(x:Float, y:Float) {
+    public inline function new(x:Float = 0, y:Float = 0) {
+        this = new BaseVector2D(x, y);
+    }
+
+    @:noCompletion
+    @:op(A + B)
+    private static inline function addOp(a:Vector2D, b:Vector2D) {
+        return new Vector2D(
+            a.x + b.x,
+            a.y + b.y
+        );
+    }
+
+    @:noCompletion
+    @:op(A += B)
+    private static inline function addEqualOp(a:Vector2D, b:Vector2D) {
+        return a.add(
+            b.x,
+            b.y
+        );
+    }
+
+    @:noCompletion
+    @:op(A - B)
+    private static inline function subtractOp(a:Vector2D, b:Vector2D) {
+        return new Vector2D(
+            a.x - b.x,
+            a.y - b.y
+        );
+    }
+
+    @:noCompletion
+    @:op(A -= B)
+    private static inline function subtractEqualOp(a:Vector2D, b:Vector2D) {
+        return a.subtract(
+            b.x,
+            b.y
+        );
+    }
+
+    @:noCompletion
+    @:op(A * B)
+    private static inline function multiplyOp(a:Vector2D, b:Vector2D) {
+        return new Vector2D(
+            a.x * b.x,
+            a.y * b.y
+        );
+    }
+
+    @:noCompletion
+    @:op(A *= B)
+    private static inline function multiplyEqualOp(a:Vector2D, b:Vector2D) {
+        return a.multiply(
+            b.x,
+            b.y
+        );
+    }
+
+    @:noCompletion
+    @:op(A / B)
+    private static inline function divideOp(a:Vector2D, b:Vector2D) {
+        return new Vector2D(
+            a.x / b.x,
+            a.y / b.y
+        );
+    }
+
+    @:noCompletion
+    @:op(A /= B)
+    private static inline function divideEqualOp(a:Vector2D, b:Vector2D) {
+        return a.divide(
+            b.x,
+            b.y
+        );
+    }
+}
+
+class BaseVector2D {
+    public var x:Float;
+    public var y:Float;
+
+    public function new(x:Float = 0, y:Float = 0) {
         set(x, y);
     }
 
+    /**
+     * Set the coordinates of this point object.
+     *
+     * @param x The X-coordinate of the point in space.
+     * @param y The Y-coordinate of the point in space.
+     */
     public inline function set(x:Float, y:Float) {
-        this = [x, y];
+        this.x = x;
+        this.y = y;
+        return this;
     }
 
+    /**
+     * Adds to the coordinates of this point.
+     *
+     * @param x Amount to add to x
+     * @param y Amount to add to y
+     */
     public inline function add(x:Float, y:Float) {
-        this[0] += x;
-        this[1] += y;
+        this.x += x;
+        this.y += y;
+        return this;
     }
 
+    /**
+     * Subtracts from the coordinates of this point.
+     *
+     * @param x Amount to subtract from x
+     * @param y Amount to subtract from y
+     */
     public inline function subtract(x:Float, y:Float) {
-        this[0] -= x;
-        this[1] -= y;
+        this.x -= x;
+        this.y -= y;
+        return this;
     }
 
+    /**
+     * Multiplies the coordinates of this point.
+     *
+     * @param x Amount to multiply to x
+     * @param y Amount to multiply to y
+     */
     public inline function multiply(x:Float, y:Float) {
-        this[0] *= x;
-        this[1] *= y;
+        this.x *= x;
+        this.y *= y;
+        return this;
     }
 
+    /**
+     * Divides the coordinates of this point.
+     *
+     * @param x Amount to divide from x
+     * @param y Amount to divide from y
+     */
     public inline function divide(x:Float, y:Float) {
-        this[0] /= x;
-        this[1] /= y;
+        this.x /= x;
+        this.y /= y;
+        return this;
     }
 
     /**
      * Sets this vector's values to those of another vector.
+     * 
      * @param vector The vector to copy.
      */
     public inline function copyFrom(vector:Vector2D) {
-        set(vector.x, vector.y);
+        return set(vector.x, vector.y);
     }
 
     /**
      * Converts a Raylib `Vector2` and turns it into a Bliss `Vector2D`.
+     * 
      * @param vector The Raylib `Vector2` to convert.
      */
     public static inline function fromRaylib(vector:Rl.Vector2) {
@@ -59,66 +177,8 @@ abstract Vector2D(Array<Float>) from Array<Float> to Array<Float> {
      * Makes every value in this vector positive.
      */
     public inline function abs() {
-        for(i => val in this)
-            this[i] = Math.abs(val);
-        
+        x = Math.abs(x);
+        y = Math.abs(y);
         return this;
-    }
-
-    //##-- VARIABLES/FUNCTIONS YOU NORMALLY SHOULDN'T HAVE TO TOUCH!! --##//
-    @:noCompletion
-    private inline function get_x():Float {
-        return this[0];
-    }
-
-    @:noCompletion
-    private inline function set_x(v:Float):Float {
-        return this[0] = v;
-    }
-
-    @:noCompletion
-    private inline function get_y():Float {
-        return this[1];
-    }
-
-    @:noCompletion
-    private inline function set_y(v:Float):Float {
-        return this[1] = v;
-    }
-
-    @:noCompletion
-    @:op(A + B)
-    private static inline function addOp(a:Vector2D, b:Vector2D) {
-        return new Vector2D(
-            a.x + b.x,
-            a.y + b.y
-        );
-    }
-
-    @:noCompletion
-    @:op(A - B)
-    private static inline function subtractOp(a:Vector2D, b:Vector2D) {
-        return new Vector2D(
-            a.x - b.x,
-            a.y - b.y
-        );
-    }
-
-    @:noCompletion
-    @:op(A * B)
-    private static inline function multiplyOp(a:Vector2D, b:Vector2D) {
-        return new Vector2D(
-            a.x * b.x,
-            a.y * b.y
-        );
-    }
-
-    @:noCompletion
-    @:op(A / B)
-    private static inline function divideOp(a:Vector2D, b:Vector2D) {
-        return new Vector2D(
-            a.x / b.x,
-            a.y / b.y
-        );
     }
 }

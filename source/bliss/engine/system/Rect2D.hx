@@ -1,45 +1,148 @@
 package bliss.engine.system;
 
-abstract Rect2D(Array<Float>) from Array<Float> to Array<Float> {
-    public var x(get, set):Float;
-    public var y(get, set):Float;
-    public var w(get, set):Float;
-    public var h(get, set):Float;
+@:forward abstract Rect2D(BaseRect2D) to BaseRect2D from BaseRect2D {
+    public function new(x:Float = 0, y:Float = 0, w:Float = 0, h:Float = 0) {
+        this = new BaseRect2D(x, y, w, h);
+    }
 
-    public function new(x:Float, y:Float, w:Float, h:Float) {
+    //##-- VARIABLES/FUNCTIONS YOU NORMALLY SHOULDN'T HAVE TO TOUCH!! --##//
+    @:noCompletion
+    @:op(A + B)
+    private static inline function addOp(a:Rect2D, b:Rect2D) {
+        return new Rect2D(
+            a.x + b.x,
+            a.y + b.y,
+            a.w + b.w,
+            a.h + b.h
+        );
+    }
+
+    @:noCompletion
+    @:op(A += B)
+    private static inline function addEqualOp(a:Rect2D, b:Rect2D) {
+        return a.add(
+            b.x,
+            b.y,
+            b.w,
+            b.h
+        );
+    }
+
+    @:noCompletion
+    @:op(A - B)
+    private static inline function subtractOp(a:Rect2D, b:Rect2D) {
+        return new Rect2D(
+            a.x - b.x,
+            a.y - b.y,
+            a.w - b.w,
+            a.h - b.h
+        );
+    }
+
+    @:noCompletion
+    @:op(A -= B)
+    private static inline function subtractEqualOp(a:Rect2D, b:Rect2D) {
+        return a.subtract(
+            b.x,
+            b.y,
+            b.w,
+            b.h
+        );
+    }
+
+    @:noCompletion
+    @:op(A * B)
+    private static inline function multiplyOp(a:Rect2D, b:Rect2D) {
+        return new Rect2D(
+            a.x * b.x,
+            a.y * b.y,
+            a.w * b.w,
+            a.h * b.h
+        );
+    }
+
+    @:noCompletion
+    @:op(A *= B)
+    private static inline function multiplyEqualOp(a:Rect2D, b:Rect2D) {
+        return a.multiply(
+            b.x,
+            b.y,
+            b.w,
+            b.h
+        );
+    }
+
+    @:noCompletion
+    @:op(A / B)
+    private static inline function divideOp(a:Rect2D, b:Rect2D) {
+        return new Rect2D(
+            a.x / b.x,
+            a.y / b.y,
+            a.w / b.w,
+            a.h / b.h
+        );
+    }
+
+    @:noCompletion
+    @:op(A /= B)
+    private static inline function divideEqualOp(a:Rect2D, b:Rect2D) {
+        return a.divide(
+            b.x,
+            b.y,
+            b.w,
+            b.h
+        );
+    }
+}
+
+class BaseRect2D {
+    public var x:Float;
+    public var y:Float;
+    public var w:Float;
+    public var h:Float;
+
+    public function new(x:Float = 0, y:Float = 0, w:Float = 0, h:Float = 0) {
         set(x, y, w, h);
     }
 
     public inline function set(x:Float, y:Float, w:Float, h:Float) {
-        this = [x, y, w, h];
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+        return this;
     }
 
     public inline function add(x:Float, y:Float, w:Float, h:Float) {
-        this[0] += x;
-        this[1] += y;
-        this[2] += w;
-        this[3] += h;
+        this.x += x;
+        this.y += y;
+        this.w += w;
+        this.h += h;
+        return this;
     }
 
     public inline function subtract(x:Float, y:Float, w:Float, h:Float) {
-        this[0] -= x;
-        this[1] -= y;
-        this[2] -= w;
-        this[3] -= h;
+        this.x -= x;
+        this.y -= y;
+        this.w -= w;
+        this.h -= h;
+        return this;
     }
 
     public inline function multiply(x:Float, y:Float, w:Float, h:Float) {
-        this[0] *= x;
-        this[1] *= y;
-        this[2] *= w;
-        this[3] *= h;
+        this.x *= x;
+        this.y *= y;
+        this.w *= w;
+        this.h *= h;
+        return this;
     }
 
     public inline function divide(x:Float, y:Float, w:Float, h:Float) {
-        this[0] /= x;
-        this[1] /= y;
-        this[2] /= w;
-        this[3] /= h;
+        this.x /= x;
+        this.y /= y;
+        this.w /= w;
+        this.h /= h;
+        return this;
     }
 
     /**
@@ -69,94 +172,10 @@ abstract Rect2D(Array<Float>) from Array<Float> to Array<Float> {
      * Makes every value in this vector positive.
      */
     public inline function abs() {
-        for(i => val in this)
-            this[i] = Math.abs(val);
-        
+        x = Math.abs(x);
+        y = Math.abs(y);
+        w = Math.abs(w);
+        h = Math.abs(h);
         return this;
-    }
-
-    //##-- VARIABLES/FUNCTIONS YOU NORMALLY SHOULDN'T HAVE TO TOUCH!! --##//
-    @:noCompletion
-    private inline function get_x():Float {
-        return this[0];
-    }
-
-    @:noCompletion
-    private inline function set_x(v:Float):Float {
-        return this[0] = v;
-    }
-
-    @:noCompletion
-    private inline function get_y():Float {
-        return this[1];
-    }
-
-    @:noCompletion
-    private inline function set_y(v:Float):Float {
-        return this[1] = v;
-    }
-
-    @:noCompletion
-    private inline function get_w():Float {
-        return this[2];
-    }
-
-    @:noCompletion
-    private inline function set_w(v:Float):Float {
-        return this[2] = v;
-    }
-
-    @:noCompletion
-    private inline function get_h():Float {
-        return this[3];
-    }
-
-    @:noCompletion
-    private inline function set_h(v:Float):Float {
-        return this[3] = v;
-    }
-
-    @:noCompletion
-    @:op(A + B)
-    private static inline function addOp(a:Rect2D, b:Rect2D) {
-        return new Rect2D(
-            a.x + b.x,
-            a.y + b.y,
-            a.w + b.w,
-            a.h + b.h
-        );
-    }
-
-    @:noCompletion
-    @:op(A - B)
-    private static inline function subtractOp(a:Rect2D, b:Rect2D) {
-        return new Rect2D(
-            a.x - b.x,
-            a.y - b.y,
-            a.w - b.w,
-            a.h - b.h
-        );
-    }
-
-    @:noCompletion
-    @:op(A * B)
-    private static inline function multiplyOp(a:Rect2D, b:Rect2D) {
-        return new Rect2D(
-            a.x * b.x,
-            a.y * b.y,
-            a.w * b.w,
-            a.h * b.h
-        );
-    }
-
-    @:noCompletion
-    @:op(A / B)
-    private static inline function divideOp(a:Rect2D, b:Rect2D) {
-        return new Rect2D(
-            a.x / b.x,
-            a.y / b.y,
-            a.w / b.w,
-            a.h / b.h
-        );
     }
 }
