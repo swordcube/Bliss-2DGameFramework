@@ -302,10 +302,10 @@ class Sprite extends Object2D {
 				_curFrameData.height * (scale.y < 0 ? -1 : 1) * (camera.zoom.x < 0 ? -1 : 1)
 			),
 			Rl.Rectangle.create(
-				Std.int(_finalRenderPos.x), 
-				Std.int(_finalRenderPos.y), 
-				Std.int(_curFrameData.width * absScale.x * absZoom.x), 
-				Std.int(_curFrameData.height * absScale.y * absZoom.y)
+				_finalRenderPos.x, 
+				_finalRenderPos.y, 
+				_curFrameData.width * absScale.x * absZoom.x, 
+				_curFrameData.height * absScale.y * absZoom.y
 			),
 			(origin * absScale * absZoom).toRaylib(),
 			angle,
