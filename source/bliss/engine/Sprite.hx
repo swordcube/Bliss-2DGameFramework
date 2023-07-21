@@ -80,7 +80,7 @@ class Sprite extends Object2D {
 	/**
 	 * Controls whether the object is smoothed when rotated, affects performance.
 	 */
-	public var antialiasing(default, set):Bool;
+	public var antialiasing:Bool = defaultAntialiasing;
 
 	/**
 	 * Creates a new Sprite instance.
@@ -102,7 +102,6 @@ class Sprite extends Object2D {
 		offset = new Vector2D(0, 0);
 		scrollFactor = new Vector2D(1, 1);
 		animation = new AnimationController(this);
-		antialiasing = defaultAntialiasing;
 	}
 
 	override function update(elapsed:Float) {
@@ -206,7 +205,6 @@ class Sprite extends Object2D {
 		animation.reset();
 		size.set(v.frames[0]?.width ?? 0, v.frames[0]?.height ?? 0);
 		
-		set_antialiasing(antialiasing); // forcefully update graphic antialiasing
 		v.graphic.useCount++;
 		return frames = v;
 	}
@@ -220,17 +218,6 @@ class Sprite extends Object2D {
 	private function set_graphic(v:BlissGraphic) {
 		frames = AtlasFrames.fromGraphic(v);
 		return v;
-	}
-
-	@:noCompletion
-	private function set_antialiasing(v:Bool) {
-		@:privateAccess
-		var texture:Rl.Texture2D = frames?.graphic?.texture ?? null;
-
-		if(texture != null)
-			Rl.setTextureFilter(texture, v ? Rl.TextureFilter.BILINEAR : Rl.TextureFilter.POINT);
-
-		return antialiasing = v;
 	}
 
 	@:noCompletion
@@ -271,6 +258,9 @@ class Sprite extends Object2D {
 
 		@:privateAccess
 		final _rawTexture:Rl.Texture2D = cast(graphic.texture, Rl.Texture2D);
+
+		if(_rawTexture != null)
+			Rl.setTextureFilter(_rawTexture, antialiasing ? Rl.TextureFilter.BILINEAR : Rl.TextureFilter.POINT);
 
 		final _animation:Animation = animation.curAnim;
 
