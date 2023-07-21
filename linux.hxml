@@ -9,6 +9,9 @@
 
 -dce no
 
+--cmd rm -rf bin/cpp/assets
+--cmd cp -r assets bin/cpp/assets
+
 -cpp bin/cpp
 -cmd cd bin/cpp
 -cmd ./Main

@@ -9,6 +9,8 @@
 
 -dce no
 
+--cmd Xcopy assets\ bin\cpp\assets\ /E /H /C /I /Y
+
 -cpp bin/cpp
 -cmd cd bin/cpp
 -cmd Main.exe

@@ -11,9 +11,13 @@ using bliss.engine.utilities.ArrayUtil;
  */
 class CameraManager {
 	/**
-	 * Removes all added cameras and makes a new single world camera.
+	 * Removes all added cameras and sets the default one
+	 * to anything specified.
+	 * 
+	 * @param newCamera  The new default camera. If none is specified,
+	 *                   a new one is made.
 	 */
-	public function reset() {
+	public function reset(?newCamera:Camera) {
 		// Remove all previous cameras
 		for(camera in _cameras) {
 			if(camera == null) continue;
@@ -22,9 +26,11 @@ class CameraManager {
 		_cameras.clearArray();
 
 		// Add a new default camera
-		var _defaultCamera:Camera = new Camera();
-		Camera.defaultCameras = [_defaultCamera];
-		_cameras.push(_defaultCamera);
+		if(newCamera == null)
+			newCamera = new Camera();
+
+		Camera.defaultCameras = [newCamera];
+		_cameras.push(newCamera);
 	}
 
 	/**

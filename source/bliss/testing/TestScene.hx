@@ -16,7 +16,7 @@ class TestScene extends Scene {
 
 	override function create() {
 		super.create();
-
+		
 		Game.cameras.add(newCam = new Camera());
 
 		add(test = new Sprite(50, 50, "assets/haxe.png"));
