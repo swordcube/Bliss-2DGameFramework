@@ -13,6 +13,16 @@ class BlissGraphic {
 	public var persist:Bool = false;
 
 	/**
+	 * The width of this graphic in pixels.
+	 */
+	public var width(get, never):Int;
+
+	/**
+	 * The height of this graphic in pixels.
+	 */
+	public var height(get, never):Int;
+
+	/**
 	 * The key/name of this graphic.
 	 */
 	public var key:String;
@@ -35,7 +45,7 @@ class BlissGraphic {
 			return Game.graphic.get(key);
 		else {
 			var graphic:BlissGraphic = new BlissGraphic();
-			graphic._texture = Rl.loadTexture(path);
+			graphic.texture = Rl.loadTexture(path);
 			graphic.key = key;
 			return Game.graphic.cacheGraphic(graphic);
 		}
@@ -46,8 +56,8 @@ class BlissGraphic {
 	 * unusable afterwards!
 	 */
 	public function destroy() {
-		Rl.unloadTexture(_texture);
-		_texture = null;
+		Rl.unloadTexture(texture);
+		texture = null;
 		useCount = -1;
 	}
 
@@ -64,14 +74,24 @@ class BlissGraphic {
 	}
 
 	@:noCompletion
-	private var _texture:Rl.Texture2D;
+	private var texture:Rl.Texture2D;
 
 	@:noCompletion
 	private inline function set_useCount(v:Int) {
-		if(v > -1 && v < 1 && !persist && _texture != null) {
+		if(v > -1 && v < 1 && !persist && texture != null) {
 			Debug.log(GENERAL, "a graphic died due to not being used :(");
 			destroy();
 		}
 		return useCount = v;
+	}
+
+	@:noCompletion
+	private inline function get_width():Int {
+		return texture.width;
+	}
+
+	@:noCompletion
+	private inline function get_height():Int {
+		return texture.width;
 	}
 }
