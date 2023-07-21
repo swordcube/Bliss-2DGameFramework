@@ -1,7 +1,8 @@
 package bliss.engine.system;
 
-import bliss.engine.Scene;
 import bliss.backend.Application;
+import bliss.managers.CacheManager;
+import bliss.engine.Scene;
 
 @:allow(bliss.engine.system.Game)
 class GameObject {
@@ -46,6 +47,7 @@ class GameObject {
 		scene = _requestedScene;
 
 		Game.signals.preSceneCreate.emit(scene);
+		Game.cache.clear();
 		scene.create();
 		scene.createPost();
 		Game.signals.postSceneCreate.emit(scene);

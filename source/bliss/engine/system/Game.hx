@@ -80,6 +80,13 @@ class Game {
 	public static var signals:SignalManager;
 
 	/**
+	 * A general object to store anything of your liking.
+	 * 
+	 * This cache will try to automatically clear on scene switch.
+	 */
+	public static var cache:CacheManager;
+
+	/**
 	 * The recommended way to easily play sounds.
 	 * 
 	 * Example:
@@ -162,6 +169,7 @@ class Game {
 		cameras = new CameraManager();
 		signals = new SignalManager();
 		sound = new SoundManager();
+		cache = new CacheManager();
 	}
 
 	@:noCompletion

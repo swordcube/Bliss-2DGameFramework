@@ -70,7 +70,7 @@ class BlissSound implements IDestroyable {
 
 	@:noCompletion
 	private function set_useCount(v:Int) {
-		if(v > -1 && v < 1 && !destroyed)
+		if(v < 1 && !destroyed)
 			destroy();
 		
 		return useCount = v;

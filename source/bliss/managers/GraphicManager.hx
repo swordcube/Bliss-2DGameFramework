@@ -32,6 +32,15 @@ class GraphicManager {
 		return graphic;
 	}
 
+	/**
+	 * Destroys each graphic in cache.
+	 */
+	public inline function clear() {
+		for(graphic in _cache)
+			graphic.destroy();
+		_cache.clear();
+	}
+
 	//##-- VARIABLES/FUNCTIONS YOU NORMALLY SHOULDN'T HAVE TO TOUCH!! --##//
 	public function new() {}
 

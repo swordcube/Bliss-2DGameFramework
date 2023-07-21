@@ -76,7 +76,7 @@ class BlissGraphic implements IDestroyable {
 
 	@:noCompletion
 	private inline function set_useCount(v:Int) {
-		if(v > -1 && v < 1 && !persist && texture != null)
+		if(v < 1 && !persist && texture != null)
 			destroy();
 		
 		return useCount = v;
