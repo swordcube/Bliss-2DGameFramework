@@ -1,8 +1,11 @@
 package bliss.engine.system;
 
-import bliss.managers.*;
-import bliss.engine.Scene;
+import bliss.backend.sound.SoundSystem;
 import bliss.backend.Application;
+
+import bliss.managers.*;
+
+import bliss.engine.Scene;
 
 enum abstract ScaleMode(Int) to Int from Int {
 	/**
@@ -69,6 +72,22 @@ class Game {
 	 * An easy variable to access keyboard input.
 	 */
 	public static var keys:KeyboardManager;
+
+	/**
+	 * A big list of signals that get called when the
+	 * game updates, creates a scene, etc.
+	 */
+	public static var signals:SignalManager;
+
+	/**
+	 * The recommended way to easily play sounds.
+	 * 
+	 * Example:
+	 * ```haxe
+	 * Game.sound.play();
+	 * ```
+	 */
+	public static var sound:SoundManager;
 
 	/**
 	 * Sets up a brand new game window.
@@ -141,6 +160,8 @@ class Game {
 		keys = new KeyboardManager();
 		graphic = new GraphicManager();
 		cameras = new CameraManager();
+		signals = new SignalManager();
+		sound = new SoundManager();
 	}
 
 	@:noCompletion

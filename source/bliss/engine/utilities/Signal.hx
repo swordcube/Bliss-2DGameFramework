@@ -15,22 +15,46 @@ typedef Signal = TypedSignal<Void->Void>;
  */
 @:multiType
 abstract TypedSignal<T>(ISignal<T>) {
+	/**
+	 * Emits all listeners connected to this signal.
+	 */
 	public var emit(get, never):T;
 
 	public function new();
 
-	public inline function connect(listener:T, ?fireOnce:Bool = false):Void {
+	/**
+	 * Connects a listener to this signal
+	 * to be executed when this signal is emitted.
+	 * 
+	 * @param listener  The listener to connect.
+	 * @param emitOnce  Whether or not the listener can only emit once.
+	 */
+	public inline function connect(listener:T, ?emitOnce:Bool = false):Void {
 		this.connect(listener);
 	}
 
+	/**
+	 * Disconnects a listener from this signal.
+	 * 
+	 * @param listener  The listener to disconnect.
+	 */
 	public inline function disconnect(listener:T):Void {
 		this.disconnect(listener);
 	}
 
+	/**
+	 * Checks if a listener has been connected
+	 * to this signal yet.
+	 * 
+	 * @param listener  The listener to check.
+	 */
 	public inline function has(listener:T):Bool {
 		return this.has(listener);
 	}
 
+	/**
+	 * Disconnects all listeners from this signal.
+	 */
 	public inline function disconnectAll():Void {
 		this.disconnectAll();
 	}
@@ -216,7 +240,7 @@ private class Signal4<T1, T2, T3, T4> extends BaseSignal<T1->T2->T3->T4->Void> {
 
 interface ISignal<T> {
 	var emit:T;
-	function connect(listener:T, ?fireOnce:Bool = false):Void;
+	function connect(listener:T, ?emitOnce:Bool = false):Void;
 	function disconnect(listener:T):Void;
 	function disconnectAll():Void;
 	function destroy():Void;

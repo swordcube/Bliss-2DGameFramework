@@ -3,9 +3,11 @@ package bliss.backend.graphics;
 import bliss.engine.system.Game;
 import bliss.engine.utilities.typeLimit.*;
 
+import bliss.backend.interfaces.IDestroyable;
+
 typedef BlissGraphicAsset = OneOfTwo<String, BlissGraphic>;
 
-class BlissGraphic {
+class BlissGraphic implements IDestroyable {
 	/**
 	 * Whether or not this graphic should stay in memory
 	 * unless forcefully cleared with the `destroy()` function.
@@ -30,14 +32,15 @@ class BlissGraphic {
 	/**
 	 * The amount of times this graphic has been used.
 	 */
-	public var useCount(default, set):Int;
+	public var useCount(default, set):Int = 0;
 
 	/**
 	 * Returns a graphic from an asset path.
 	 * 
-	 * @param path The path to load from. Example: assets/haxe.png
+	 * @param path  The path to load from. Example: assets/haxe.png
+	 * @param key   The key of an already stored graphic to try and load.
 	 */
-	public static function fromPath(path:String, ?key:String):BlissGraphic {
+	public static function fromFile(path:String, ?key:String):BlissGraphic {
 		if(key == null) key = path;
 
 		@:privateAccess
@@ -66,22 +69,16 @@ class BlissGraphic {
 	 * Used internally, please use the static helper functions.
 	 */
 	@:noCompletion
-	private function new() {
-		var _p:Bool = persist;
-		persist = true;
-		useCount = 0;
-		persist = _p;
-	}
+	private function new() {}
 
 	@:noCompletion
 	private var texture:Rl.Texture2D;
 
 	@:noCompletion
 	private inline function set_useCount(v:Int) {
-		if(v > -1 && v < 1 && !persist && texture != null) {
-			Debug.log(GENERAL, "a graphic died due to not being used :(");
+		if(v > -1 && v < 1 && !persist && texture != null)
 			destroy();
-		}
+		
 		return useCount = v;
 	}
 

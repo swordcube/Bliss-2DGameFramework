@@ -16,6 +16,9 @@ class TestScene extends Scene {
 
 	override function create() {
 		super.create();
+
+		Game.sound.playMusic("assets/music/Monsters_Inst.mp3");
+		Game.sound.music.pitch = 2;
 		
 		Game.cameras.add(newCam = new Camera());
 

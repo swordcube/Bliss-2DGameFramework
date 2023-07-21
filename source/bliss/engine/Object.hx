@@ -1,8 +1,10 @@
 package bliss.engine;
 
+import bliss.backend.interfaces.IObject;
+
 import bliss.engine.Camera;
 
-class Object {
+class Object implements IObject {
 	/**
 	 * Whether or not this object is currently
 	 * allowed to update.

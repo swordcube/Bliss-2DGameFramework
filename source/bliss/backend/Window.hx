@@ -1,12 +1,16 @@
 package bliss.backend;
 
 import bliss.Project;
+
+import bliss.backend.graphics.BlissColor;
+import bliss.backend.input.Keys;
+
 import bliss.engine.system.Game;
 import bliss.engine.system.Rect2D;
 import bliss.engine.system.Vector2D;
 import bliss.engine.utilities.Signal;
 import bliss.engine.utilities.MathUtil;
-import bliss.backend.graphics.BlissColor;
+
 
 class Window {
 	/**
@@ -103,6 +107,7 @@ class Window {
 		Rl.setTraceLogLevel(Rl.TraceLogLevel.WARNING);
 		Rl.initWindow(Std.int(_width), Std.int(_height), "...");
 		Rl.setWindowState(Rl.ConfigFlags.WINDOW_RESIZABLE);
+		Rl.setExitKey(Keys.NONE);
 		// ^ -- raylib stuff
 
 		// adjust to work with other renderers ig lol!

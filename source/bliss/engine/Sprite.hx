@@ -87,7 +87,7 @@ class Sprite extends Object2D {
 		if(graphic is BlissGraphic)
 			this.graphic = graphic;
 		else if(graphic is String)
-			this.graphic = BlissGraphic.fromPath(cast(graphic, String));
+			this.graphic = BlissGraphic.fromFile(cast(graphic, String));
 
 		this.graphic.useCount++;
 		return this;

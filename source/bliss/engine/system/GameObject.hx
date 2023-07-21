@@ -14,16 +14,20 @@ class GameObject {
 		if(scene != _requestedScene)
 			switchScene();
 
-		if(scene != null)
+		if(scene != null) {
+			Game.signals.preSceneUpdate.emit(scene);
 			scene.update(elapsed);
-
+			Game.signals.postSceneUpdate.emit(scene);
+		}
 		Game.cameras.update(elapsed);
 	}
 
 	public function render() {
-		if(scene != null)
+		if(scene != null) {
+			Game.signals.preSceneRender.emit(scene);
 			scene.render();
-
+			Game.signals.postSceneRender.emit(scene);
+		}
 		Game.cameras.render();
 	}
 
@@ -32,13 +36,19 @@ class GameObject {
 		Game.cameras.reset();
 		
 		// Destroy old scene if possible
-		if(scene != null)
+		if(scene != null) {
+			Game.signals.preSceneDestroy.emit(scene);
 			scene.destroy();
+			Game.signals.postSceneDestroy.emit(scene);
+		}
 
 		// Switch the scene to the currently requested one
 		scene = _requestedScene;
+
+		Game.signals.preSceneCreate.emit(scene);
 		scene.create();
 		scene.createPost();
+		Game.signals.postSceneCreate.emit(scene);
 	}
 
 	//##-- VARIABLES/FUNCTIONS YOU NORMALLY SHOULDN'T HAVE TO TOUCH!! --##//
