@@ -2,6 +2,8 @@ package bliss.engine;
 
 import bliss.backend.Debug;
 
+import bliss.engine.utilities.SortUtil;
+
 using bliss.engine.utilities.ArrayUtil;
 
 class Group<T:Object> extends Object {
@@ -153,6 +155,20 @@ class Group<T:Object> extends Object {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Call this function to sort the group according to a particular value and order.
+	 * For example, to sort game objects for Zelda-style overlaps you might call
+	 * `group.sort(SortUtil.byY, SortUtil.ASCENDING)` at the bottom of your `FlxState#update()` override.
+	 *
+	 * @param   func       The sorting function to use - you can use one of the premade ones in
+	 *                     `SortUtil` or write your own using `SortUtil.byValues()` as a "backend".
+	 * @param   order      A constant that defines the sort order.
+	 *                     Possible values are `SortUtil.ASCENDING` (default) and `SortUtil.DESCENDING`.
+	 */
+	public inline function sort(func:Int->T->T->Int, order:Int = SortUtil.ASCENDING):Void {
+		members.sort(func.bind(order));
 	}
 
 	/**
