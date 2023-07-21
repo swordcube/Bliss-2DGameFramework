@@ -1,0 +1,14 @@
+{
+    "name": "bliss-framework",
+    "url" : "https://github.com/swordcube/Bliss-2DGameFramework",
+    "license": "MIT",
+    "tags": ["raylib", "framework", "2d", "2D", "bliss", "gamedev", "game", "development", "develop", "dev"],
+    "description": "A 2D game framework made in Haxe.",
+    "version": "0.1.0",
+    "classPath": "source/",
+    "releasenote": "",
+    "contributors": ["swordcube"],
+    "dependencies": {
+        "raylib-hx": ""
+    }
+  } 
