@@ -1,11 +1,15 @@
-package bliss.frontend;
+package bliss.managers;
 
 import bliss.backend.Debug;
 import bliss.engine.Camera;
 
 using bliss.engine.utilities.ArrayUtil;
 
-class CameraFrontEnd {
+/**
+ * A helper class to easily add multiple
+ * cameras to the current scene.
+ */
+class CameraManager {
 	/**
 	 * Removes all added cameras and makes a new single world camera.
 	 */

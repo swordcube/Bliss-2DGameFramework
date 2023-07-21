@@ -11,10 +11,6 @@ enum abstract KeyState(Int) to Int from Int {
 
 /**
  * Maps enum values and strings to integer keycodes.
- * 
- * You can also use `Rl.Keys` at the risk of more compiler errors.
- * 
- * This is `FlxKey` with key codes from Raylib.
 
  * @see https://github.com/HaxeFlixel/flixel/blob/master/flixel/input/keyboard/FlxKey.hx
  * @see https://github.com/raysan5/raylib/blob/master/src/raylib.h#LL541C3-L541C3

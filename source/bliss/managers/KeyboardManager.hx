@@ -1,9 +1,9 @@
-package bliss.backend.input;
+package bliss.managers;
 
 import bliss.backend.input.Keys;
 
 /**
- * A class to make keyboard input easier to code.
+ * A helper class to make keyboard input easier to code.
  */
 class KeyboardManager {
     public var justPressed(get, never):Keys->Bool;

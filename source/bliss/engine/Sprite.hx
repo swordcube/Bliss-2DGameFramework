@@ -157,7 +157,7 @@ class Sprite extends Object2D {
 	@:noCompletion
 	private inline function set_graphic(v:BlissGraphic) {
 		@:privateAccess
-		size.set(v._texture.width, v._texture.height);
+		size.set(v.texture.width, v.texture.height);
 		antialiasing = antialiasing; // forcefully update graphic antialiasing
 		return graphic = v;
 	}
@@ -165,7 +165,7 @@ class Sprite extends Object2D {
 	@:noCompletion
 	private inline function set_antialiasing(v:Bool) {
 		@:privateAccess
-		var texture:Rl.Texture2D = graphic?._texture ?? null;
+		var texture:Rl.Texture2D = graphic?.texture ?? null;
 
 		if(texture != null)
 			Rl.setTextureFilter(texture, v ? 1 : 0);
@@ -182,7 +182,7 @@ class Sprite extends Object2D {
 		// or the sprite is off screen or the attached camera's
 		// zoom is 0, Don't try to render.
 		@:privateAccess
-		if(graphic?._texture == null || !camera.isOnScreen(this) || camera.zoom.x == 0 || camera.zoom.y == 0)
+		if(graphic?.texture == null || !camera.isOnScreen(this) || camera.zoom.x == 0 || camera.zoom.y == 0)
 			return;
 
 		var radians = (angle % 360) * MathUtil.FULL_PI / 180;
@@ -197,7 +197,7 @@ class Sprite extends Object2D {
 		var absZoom:Vector2D = camera.zoom.abs();
 
 		@:privateAccess
-		var _rawTexture:Rl.Texture2D = cast(graphic._texture, Rl.Texture2D);
+		var _rawTexture:Rl.Texture2D = cast(graphic.texture, Rl.Texture2D);
 
 		var _ot:Float = tint.alphaFloat;
 		tint.alphaFloat = alpha;

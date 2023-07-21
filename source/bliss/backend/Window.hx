@@ -141,6 +141,7 @@ class Window {
 	 */
 	public function close() {
 		if(closed) return;
+		Rl.setTraceLogLevel(Rl.TraceLogLevel.NONE);
 		onClose.emit();
 		Rl.closeWindow();
 		closed = true;

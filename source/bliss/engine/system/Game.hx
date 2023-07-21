@@ -1,8 +1,7 @@
 package bliss.engine.system;
 
-import bliss.frontend.*;
+import bliss.managers.*;
 import bliss.engine.Scene;
-import bliss.backend.input.*;
 import bliss.backend.Application;
 
 enum abstract ScaleMode(Int) to Int from Int {
@@ -49,12 +48,12 @@ class Game {
 	/**
 	 * A simple way to store/remove graphics from a cache.
 	 */
-	public static var graphic:GraphicFrontEnd;
+	public static var graphic:GraphicManager;
 
 	/**
 	 * An simple way to add/remove cameras to the game.
 	 */
-	public static var cameras:CameraFrontEnd;
+	public static var cameras:CameraManager;
 
 	/**
 	 * The width in pixels of the game.
@@ -140,10 +139,8 @@ class Game {
 	private static function init() {
 		// Setup helper managers
 		keys = new KeyboardManager();
-
-		// Setup helper frontends
-		graphic = new GraphicFrontEnd();
-		cameras = new CameraFrontEnd();
+		graphic = new GraphicManager();
+		cameras = new CameraManager();
 	}
 
 	@:noCompletion

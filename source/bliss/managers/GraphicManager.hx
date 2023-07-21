@@ -1,8 +1,8 @@
-package bliss.frontend;
+package bliss.managers;
 
 import bliss.backend.graphics.BlissGraphic;
 
-class GraphicFrontEnd {
+class GraphicManager {
 	/**
 	 * Returns a stored graphic from a specified key.
 	 * 
