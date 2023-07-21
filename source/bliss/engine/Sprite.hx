@@ -1,11 +1,16 @@
 package bliss.engine;
 
+import bliss.engine.animation.Animation;
+import bliss.engine.animation.AnimationController;
+import bliss.backend.graphics.BlissGraphic;
+
 import bliss.engine.Camera;
 import bliss.engine.system.Game;
+import bliss.engine.system.Vector2D;
+
 import bliss.engine.utilities.Axes;
 import bliss.engine.utilities.MathUtil;
-import bliss.engine.system.Vector2D;
-import bliss.backend.graphics.BlissGraphic;
+import bliss.engine.utilities.AtlasFrames;
 
 class Sprite extends Object2D {
 	/**
@@ -18,7 +23,18 @@ class Sprite extends Object2D {
 	/**
 	 * The graphic that this sprite renders.
 	 */
-	public var graphic(default, set):BlissGraphic;
+	@:isVar public var graphic(get, set):BlissGraphic;
+
+	/**
+	 * The collection of frames that this sprite
+	 * can animate with.
+	 */
+	public var frames(default, set):AtlasFrames;
+
+	/**
+	 * A helper for easily adding, removing, and playing animations.
+	 */
+	public var animation:AnimationController;
 
 	/**
 	 * An X & Y multiplier to the sprite's size.
@@ -34,17 +50,11 @@ class Sprite extends Object2D {
 
 	/**
 	 * The position of the sprite's graphic relative to its hitbox. For example, `offset.x = 10;` will
-	 * show the graphic 10 pixels right (left if `flipOffsets` is set to `true`) of the hitbox.
+	 * show the graphic 10 pixels right of the hitbox.
 	 * 
 	 * Likely needs to be adjusted after changing a sprite's `width`, `height` or `scale`.
 	 */
 	public var offset:Vector2D;
-
-	/**
-	 * Whether or not you want this sprite's offsets to act like `HaxeFlixel`,
-	 * where negative = right/down + positive = left/up
-	 */
-	public var flipOffsets:Bool = false;
 
 	/**
 	 * How much the sprite moves with the camera.
@@ -67,15 +77,22 @@ class Sprite extends Object2D {
 	public function new(x:Float = 0, y:Float = 0, ?presetGraphic:BlissGraphicAsset) {
 		super(x, y, 0, 0);
 
+		if(presetGraphic != null)
+			loadGraphic(presetGraphic);
+	}
+	
+	override function initVars() {
 		scale = new Vector2D(1, 1);
 		origin = new Vector2D(0, 0);
 		offset = new Vector2D(0, 0);
 		scrollFactor = new Vector2D(1, 1);
-
-		if(presetGraphic != null)
-			loadGraphic(presetGraphic);
-
+		animation = new AnimationController(this);
 		antialiasing = defaultAntialiasing;
+	}
+
+	override function update(elapsed:Float) {
+		super.update(elapsed);
+		animation.update(elapsed);
 	}
 
 	/**
@@ -85,11 +102,11 @@ class Sprite extends Object2D {
 	 */
 	public function loadGraphic(graphic:BlissGraphicAsset) {
 		if(graphic is BlissGraphic)
-			this.graphic = graphic;
+			frames = AtlasFrames.fromGraphic(graphic);
 		else if(graphic is String)
-			this.graphic = BlissGraphic.fromFile(cast(graphic, String));
+			frames = AtlasFrames.fromGraphic(BlissGraphic.fromFile(cast(graphic, String)));
 
-		this.graphic.useCount++;
+		frames.graphic.useCount++;
 		return this;
 	}
 
@@ -99,12 +116,12 @@ class Sprite extends Object2D {
 	 * @param adjustPosition Adjusts the actual X and Y position just once to match the offset change.
 	 */
 	public function centerOffsets(adjustPosition:Bool = false):Void {
-		offset.x = (size.x - (size.x * scale.x)) * (flipOffsets ? 0.5 : -0.5);
-		offset.y = (size.x - (size.y * scale.y)) * (flipOffsets ? 0.5 : -0.5);
+		offset.x = (size.x - (size.x * scale.x)) * -0.5;
+		offset.y = (size.x - (size.y * scale.y)) * -0.5;
 
 		if(adjustPosition) {
-			position.x -= offset.x * (flipOffsets ? -1 : 1);
-			position.y -= offset.y * (flipOffsets ? -1 : 1);
+			position.x -= offset.x;
+			position.y -= offset.y;
 		}
 	}
 
@@ -145,7 +162,8 @@ class Sprite extends Object2D {
 	 * Makes this sprite potentially unusable afterwards!
 	 */
 	override function destroy() {
-		graphic.useCount--;
+		if(frames.graphic != null)
+			frames.graphic.useCount--;
 		scale = null;
 		origin = null;
 		offset = null;
@@ -155,17 +173,28 @@ class Sprite extends Object2D {
 
 	//##-- VARIABLES/FUNCTIONS YOU NORMALLY SHOULDN'T HAVE TO TOUCH!! --##//
 	@:noCompletion
+	private inline function get_graphic() {
+		return frames?.graphic;
+	}
+
+	@:noCompletion
 	private inline function set_graphic(v:BlissGraphic) {
-		@:privateAccess
-		size.set(v.texture.width, v.texture.height);
+		animation.reset();
+		frames = AtlasFrames.fromGraphic(v);
 		antialiasing = antialiasing; // forcefully update graphic antialiasing
-		return graphic = v;
+		return v;
+	}
+
+	@:noCompletion
+	private inline function set_frames(v:AtlasFrames) {
+		size.set(v.frames[0]?.width ?? 0, v.frames[0]?.height ?? 0);
+		return frames = v;
 	}
 
 	@:noCompletion
 	private inline function set_antialiasing(v:Bool) {
 		@:privateAccess
-		var texture:Rl.Texture2D = graphic?.texture ?? null;
+		var texture:Rl.Texture2D = frames?.graphic?.texture ?? null;
 
 		if(texture != null)
 			Rl.setTextureFilter(texture, v ? 1 : 0);
@@ -176,6 +205,9 @@ class Sprite extends Object2D {
 	@:noCompletion
 	private var _renderSpritePos:Vector2D = new Vector2D(0, 0);
 
+	// i'ma be honest this function is kinda messy
+	// but i do not wanna rework it because i do not feel like
+	// most likely breaking the entire function
 	@:noCompletion
 	private function renderComplex(camera:Camera) {
 		// If the graphic or it's internal texture are somehow null
@@ -185,21 +217,26 @@ class Sprite extends Object2D {
 		if(graphic?.texture == null || !camera.isOnScreen(this) || camera.zoom.x == 0 || camera.zoom.y == 0)
 			return;
 
-		var radians = (angle % 360) * MathUtil.FULL_PI / 180;
-		var cosMult = Math.cos(radians);
-		var sinMult = Math.sin(radians);
+		final radians = (angle % 360) * MathUtil.FULL_PI / 180;
+		final cosMult = Math.cos(radians);
+		final sinMult = Math.sin(radians);
 
-		var ogAngle:Float = angle;
+		final ogAngle:Float = angle;
 		angle += camera.angle;
 		angle %= 360;
 
-		var absScale:Vector2D = scale.abs();
-		var absZoom:Vector2D = camera.zoom.abs();
+		final absScale:Vector2D = scale.abs();
+		final absZoom:Vector2D = camera.zoom.abs();
 
 		@:privateAccess
-		var _rawTexture:Rl.Texture2D = cast(graphic.texture, Rl.Texture2D);
+		final _rawTexture:Rl.Texture2D = cast(graphic.texture, Rl.Texture2D);
 
-		var _ot:Float = tint.alphaFloat;
+		final _animation:Animation = animation.curAnim;
+
+		@:privateAccess
+		final _curFrameData:FrameData = _animation?._frames[_animation.curFrame] ?? frames.frames[0];
+
+		final _ot:Float = tint.alphaFloat;
 		tint.alphaFloat = alpha;
 
 		_renderSpritePos.set(
@@ -207,23 +244,27 @@ class Sprite extends Object2D {
 			position.y + ((origin.y * scale.y) + (-0.5 * ((size.y * absScale.y) - size.y)))
 		);
 
-		_renderSpritePos.x += (offset.x * absScale.x) * cosMult + (offset.y * absScale.y) * -sinMult;
-		_renderSpritePos.y += (offset.x * absScale.x) * sinMult + (offset.y * absScale.y) * cosMult;
+		var _renderOffset = offset + (_animation?.offset ?? Vector2D.ZERO);
+		_renderOffset.x += -_curFrameData.frameX;
+		_renderOffset.y += -_curFrameData.frameY;
+
+		_renderSpritePos.x += (_renderOffset.x * absScale.x) * cosMult + (_renderOffset.y * absScale.y) * -sinMult;
+		_renderSpritePos.y += (_renderOffset.x * absScale.x) * sinMult + (_renderOffset.y * absScale.y) * cosMult;
 
 		var _finalRenderPos:Vector2D = camera.adjustToCamera(_renderSpritePos);
 
 		Rl.drawTexturePro(
 			_rawTexture,
 			Rl.Rectangle.create(
-				0, 0,
-				_rawTexture.width * (scale.x < 0 ? -1 : 1) * (camera.zoom.x < 0 ? -1 : 1),
-				_rawTexture.height * (scale.y < 0 ? -1 : 1) * (camera.zoom.x < 0 ? -1 : 1)
+				_curFrameData.x, _curFrameData.y,
+				_curFrameData.width * (scale.x < 0 ? -1 : 1) * (camera.zoom.x < 0 ? -1 : 1),
+				_curFrameData.height * (scale.y < 0 ? -1 : 1) * (camera.zoom.x < 0 ? -1 : 1)
 			),
 			Rl.Rectangle.create(
 				_finalRenderPos.x, 
 				_finalRenderPos.y, 
-				_rawTexture.width * absScale.x * absZoom.x, 
-				_rawTexture.height * absScale.y * absZoom.y
+				_curFrameData.width * absScale.x * absZoom.x, 
+				_curFrameData.height * absScale.y * absZoom.y
 			),
 			(origin * absScale * absZoom).toRaylib(),
 			angle,

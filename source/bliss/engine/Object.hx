@@ -40,7 +40,15 @@ class Object implements IObject {
 	/**
 	 * Creates a new Object instance.
 	 */
-	public function new() {}
+	public function new() {
+		initVars();
+	}
+
+	/**
+	 * A function that can be easily overriden
+	 * to initialize variables for this object.
+	 */
+	public function initVars() {}
 
 	/**
 	 * The function that updates this object.

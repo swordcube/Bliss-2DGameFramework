@@ -29,10 +29,12 @@ class Camera extends Object2D {
      * @param sprite The sprite to check.
      */
     public function isOnScreen(sprite:Sprite) {
-        return !((sprite.position.x < (-Math.abs((sprite.size.x * sprite.scale.x) * 2) / zoom.x)) ||
-            (sprite.position.y < (-Math.abs((sprite.size.y * sprite.scale.y) * 2) / zoom.y)) ||
-            (sprite.position.x > ((Game.width + Math.abs((sprite.size.x * sprite.scale.x) * 2)) / zoom.x)) ||
-            (sprite.position.y > ((Game.height + Math.abs((sprite.size.y * sprite.scale.y) * 2)) / zoom.y)));
+		final leftOff:Bool = (sprite.position.x < (-Math.abs((sprite.size.x * sprite.scale.x) * 2) / zoom.x));
+		final rightOff:Bool = (sprite.position.x > ((Game.width + Math.abs((sprite.size.x * sprite.scale.x) * 2)) / zoom.x));
+		final topOff:Bool = (sprite.position.y < (-Math.abs((sprite.size.y * sprite.scale.y) * 2) / zoom.y));
+		final bottomOff:Bool = (sprite.position.y > ((Game.height + Math.abs((sprite.size.y * sprite.scale.y) * 2)) / zoom.y));
+		
+        return !(leftOff || rightOff || topOff || bottomOff);
     }
 
 	/**
