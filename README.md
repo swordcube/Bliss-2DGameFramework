@@ -1,9 +1,8 @@
-# Haxe project
+# 🌲 Bliss
+A 2D game framework made in Haxe.
 
-This is an example Haxe project scaffolded by Visual Studio Code.
-
-Without further changes the structure is following:
-
- * `src/Main.hx`: Entry point Haxe source file
- * `build.hxml`: Haxe command line file used to build the project
- * `README.md`: This file
+Install through github:
+```
+haxelib git raylib-hx https://github.com/foreignsasquatch/raylib-hx
+haxelib git bliss-framework https://github.com/swordcube/Bliss-2DGameFramework
+```
