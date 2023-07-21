@@ -1,7 +1,8 @@
 package bliss.engine;
 
 import bliss.backend.Debug;
-import bliss.engine.utilities.ArrayUtil;
+
+using bliss.engine.utilities.ArrayUtil;
 
 class Group<T:Object> extends Object {
 	public var members:Array<T> = [];
@@ -102,6 +103,16 @@ class Group<T:Object> extends Object {
 			members[members.indexOf(object)] = null;
 
 		return object;
+	}
+
+	/**
+	 * Remove all objects from this group.
+	 * 
+	 * WARNING: Does not `destroy()` or `kill()` any of these objects!
+	 */
+	public function clear() {
+		length = 0;
+		members.clearArray();
 	}
 
 	/**

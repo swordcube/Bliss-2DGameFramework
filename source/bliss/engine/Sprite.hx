@@ -23,7 +23,7 @@ class Sprite extends Object2D {
 	/**
 	 * The graphic that this sprite renders.
 	 */
-	@:isVar public var graphic(get, set):BlissGraphic;
+	 @:isVar public var graphic(get, set):BlissGraphic;
 
 	/**
 	 * The collection of frames that this sprite
@@ -39,14 +39,28 @@ class Sprite extends Object2D {
 	/**
 	 * An X & Y multiplier to the sprite's size.
 	 */
-	public var scale:Vector2D;
+	public var scale(default, set):Vector2D;
+
+	/**
+	 * The X size of this sprite multiplied by this sprite's scale.
+	 * 
+	 * Basically just a shortcut to `size.x * Math.abs(scale.x)`.
+	 */
+	public var width(get, never):Float;
+
+	/**
+	 * The X size of this sprite multiplied by this sprite's scale.
+	 * 
+	 * Basically just a shortcut to `size.y * Math.abs(scale.y)`.
+	 */
+	public var height(get, never):Float;
 
 	/**
 	 * The origin at which the sprite should rotate at.
 	 * 
 	 * Ranges from 0 to the sprite's width/height.
 	 */
-	public var origin:Vector2D;
+	public var origin(default, set):Vector2D;
 
 	/**
 	 * The position of the sprite's graphic relative to its hitbox. For example, `offset.x = 10;` will
@@ -54,13 +68,13 @@ class Sprite extends Object2D {
 	 * 
 	 * Likely needs to be adjusted after changing a sprite's `width`, `height` or `scale`.
 	 */
-	public var offset:Vector2D;
+	public var offset(default, set):Vector2D;
 
 	/**
 	 * How much the sprite moves with the camera.
 	 * Can be used for parallax.
 	 */
-	public var scrollFactor:Vector2D;
+	public var scrollFactor(default, set):Vector2D;
 
 	/**
 	 * Controls whether the object is smoothed when rotated, affects performance.
@@ -173,33 +187,43 @@ class Sprite extends Object2D {
 
 	//##-- VARIABLES/FUNCTIONS YOU NORMALLY SHOULDN'T HAVE TO TOUCH!! --##//
 	@:noCompletion
-	private inline function get_graphic() {
-		return frames?.graphic;
-	}
-
-	@:noCompletion
-	private inline function set_graphic(v:BlissGraphic) {
-		animation.reset();
-		frames = AtlasFrames.fromGraphic(v);
-		antialiasing = antialiasing; // forcefully update graphic antialiasing
-		return v;
-	}
-
-	@:noCompletion
-	private inline function set_frames(v:AtlasFrames) {
+	private function set_frames(v:AtlasFrames) {
 		size.set(v.frames[0]?.width ?? 0, v.frames[0]?.height ?? 0);
+		set_antialiasing(antialiasing); // forcefully update graphic antialiasing
 		return frames = v;
 	}
 
 	@:noCompletion
-	private inline function set_antialiasing(v:Bool) {
+	private function get_graphic() {
+		return frames?.graphic;
+	}
+
+	@:noCompletion
+	private function set_graphic(v:BlissGraphic) {
+		animation.reset();
+		frames = AtlasFrames.fromGraphic(v);
+		return v;
+	}
+
+	@:noCompletion
+	private function set_antialiasing(v:Bool) {
 		@:privateAccess
 		var texture:Rl.Texture2D = frames?.graphic?.texture ?? null;
 
 		if(texture != null)
-			Rl.setTextureFilter(texture, v ? 1 : 0);
+			Rl.setTextureFilter(texture, v ? Rl.TextureFilter.BILINEAR : Rl.TextureFilter.POINT);
 
 		return antialiasing = v;
+	}
+
+	@:noCompletion
+	private function get_width() {
+		return size.x * Math.abs(scale.x);
+	}
+
+	@:noCompletion
+	private function get_height() {
+		return size.y * Math.abs(scale.y);
 	}
 
 	@:noCompletion
@@ -261,10 +285,10 @@ class Sprite extends Object2D {
 				_curFrameData.height * (scale.y < 0 ? -1 : 1) * (camera.zoom.x < 0 ? -1 : 1)
 			),
 			Rl.Rectangle.create(
-				_finalRenderPos.x, 
-				_finalRenderPos.y, 
-				_curFrameData.width * absScale.x * absZoom.x, 
-				_curFrameData.height * absScale.y * absZoom.y
+				Std.int(_finalRenderPos.x), 
+				Std.int(_finalRenderPos.y), 
+				Std.int(_curFrameData.width * absScale.x * absZoom.x), 
+				Std.int(_curFrameData.height * absScale.y * absZoom.y)
 			),
 			(origin * absScale * absZoom).toRaylib(),
 			angle,
@@ -274,5 +298,27 @@ class Sprite extends Object2D {
 		tint.alphaFloat = _ot;
 
 		angle = ogAngle;
+	}
+
+	// you might think, why have these getters and setters?
+	// it's so you can do something when alpha or position is set or whatever.
+	@:noCompletion
+	private function set_scale(value:Vector2D):Vector2D {
+		return scale = value;
+	}
+
+	@:noCompletion
+	private function set_origin(value:Vector2D):Vector2D {
+		return origin = value;
+	}
+
+	@:noCompletion
+	private function set_offset(value:Vector2D):Vector2D {
+		return offset = value;
+	}
+
+	@:noCompletion
+	private function set_scrollFactor(value:Vector2D):Vector2D {
+		return scrollFactor = value;
 	}
 }
