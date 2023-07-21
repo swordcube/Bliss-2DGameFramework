@@ -42,11 +42,11 @@ class AtlasFrames implements IDestroyable {
      *                 This can be a path or raw XML data.
 	 */
 	public static function fromGraphic(graphic:BlissGraphicAsset):AtlasFrames {
-        if(graphic is String && Game.cache.isCached("#GRAPHIC_"+(cast graphic)))
-            return cast Game.cache.get("#GRAPHIC_"+(cast graphic));
+        if(graphic is String && Game.cache.isCached("#ATLAS_"+(cast graphic)))
+            return cast Game.cache.get("#ATLAS_"+(cast graphic));
 
-        if(graphic is BlissGraphic && Game.cache.isCached("#GRAPHIC_"+cast(graphic, BlissGraphic).key))
-            return cast Game.cache.get("#GRAPHIC_"+cast(graphic, BlissGraphic).key);
+        if(graphic is BlissGraphic && Game.cache.isCached("#ATLAS_"+cast(graphic, BlissGraphic).key))
+            return cast Game.cache.get("#ATLAS_"+cast(graphic, BlissGraphic).key);
 
 		var atlas = new AtlasFrames();
 		if(graphic is BlissGraphic)
@@ -63,7 +63,7 @@ class AtlasFrames implements IDestroyable {
             frameX: 0,
             frameY: 0,
         });
-        return cast Game.cache.cacheAsset("#GRAPHIC_"+atlas.graphic.key, atlas);
+        return cast Game.cache.cacheAsset("#ATLAS_"+atlas.graphic.key, atlas);
     }
 
 	/**
