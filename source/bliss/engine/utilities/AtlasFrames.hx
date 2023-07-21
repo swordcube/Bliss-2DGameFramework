@@ -42,10 +42,10 @@ class AtlasFrames implements IDestroyable {
      *                 This can be a path or raw XML data.
 	 */
 	public static function fromGraphic(graphic:BlissGraphicAsset):AtlasFrames {
-        if(graphic is String && Game.cache.exists("#GRAPHIC_"+(cast graphic)))
+        if(graphic is String && Game.cache.isCached("#GRAPHIC_"+(cast graphic)))
             return cast Game.cache.get("#GRAPHIC_"+(cast graphic));
 
-        if(graphic is BlissGraphic && Game.cache.exists("#GRAPHIC_"+cast(graphic, BlissGraphic).key))
+        if(graphic is BlissGraphic && Game.cache.isCached("#GRAPHIC_"+cast(graphic, BlissGraphic).key))
             return cast Game.cache.get("#GRAPHIC_"+cast(graphic, BlissGraphic).key);
 
 		var atlas = new AtlasFrames();
@@ -74,10 +74,13 @@ class AtlasFrames implements IDestroyable {
      *                 This can be a path or raw XML data.
 	 */
 	public static function fromSparrow(graphic:BlissGraphicAsset, xml:String):AtlasFrames {
-        if(graphic is String && Game.cache.exists("#ATLAS_"+(cast graphic)))
-            return cast Game.cache.get("#ATLAS_"+(cast graphic));
+        if(graphic is String && Game.cache.isCached("#ATLAS_"+cast(graphic, String)))
+            return cast Game.cache.get("#ATLAS_"+cast(graphic, String));
 
-        if(graphic is String && Game.cache.exists("#ATLAS_"+xml))
+        if(graphic is BlissGraphic && Game.cache.isCached("#ATLAS_"+cast(graphic, BlissGraphic).key))
+            return cast Game.cache.get("#ATLAS_"+cast(graphic, BlissGraphic).key);
+
+        if(Game.cache.isCached("#ATLAS_"+xml))
             return cast Game.cache.get("#ATLAS_"+xml);
 
         var xmlData:Xml = null;

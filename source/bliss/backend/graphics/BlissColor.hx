@@ -19,22 +19,22 @@ abstract BlissColor(Int) from Int from UInt to Int to UInt {
 	// every color must have COLOR_ prefixed behind it
 	// to prevent conflicts with raylib
 
-	public static var COLOR_TRANSPARENT:BlissColor = 0x00000000;
-	public static var COLOR_WHITE:BlissColor = 0xFFFFFFFF;
-	public static var COLOR_GRAY:BlissColor = 0xFF808080;
-	public static var COLOR_BLACK:BlissColor = 0xFF000000;
+	public static inline var COLOR_TRANSPARENT:BlissColor = 0x00000000;
+	public static inline var COLOR_WHITE:BlissColor = 0xFFFFFFFF;
+	public static inline var COLOR_GRAY:BlissColor = 0xFF808080;
+	public static inline var COLOR_BLACK:BlissColor = 0xFF000000;
 
-	public static var COLOR_GREEN:BlissColor = 0xFF008000;
-	public static var COLOR_LIME:BlissColor = 0xFF00FF00;
-	public static var COLOR_YELLOW:BlissColor = 0xFFFFFF00;
-	public static var COLOR_ORANGE:BlissColor = 0xFFFFA500;
-	public static var COLOR_RED:BlissColor = 0xFFFF0000;
-	public static var COLOR_PURPLE:BlissColor = 0xFF800080;
-	public static var COLOR_BLUE:BlissColor = 0xFF0000FF;
-	public static var COLOR_BROWN:BlissColor = 0xFF8B4513;
-	public static var COLOR_PINK:BlissColor = 0xFFFFC0CB;
-	public static var COLOR_MAGENTA:BlissColor = 0xFFFF00FF;
-	public static var COLOR_CYAN:BlissColor = 0xFF00FFFF;
+	public static inline var COLOR_GREEN:BlissColor = 0xFF008000;
+	public static inline var COLOR_LIME:BlissColor = 0xFF00FF00;
+	public static inline var COLOR_YELLOW:BlissColor = 0xFFFFFF00;
+	public static inline var COLOR_ORANGE:BlissColor = 0xFFFFA500;
+	public static inline var COLOR_RED:BlissColor = 0xFFFF0000;
+	public static inline var COLOR_PURPLE:BlissColor = 0xFF800080;
+	public static inline var COLOR_BLUE:BlissColor = 0xFF0000FF;
+	public static inline var COLOR_BROWN:BlissColor = 0xFF8B4513;
+	public static inline var COLOR_PINK:BlissColor = 0xFFFFC0CB;
+	public static inline var COLOR_MAGENTA:BlissColor = 0xFFFF00FF;
+	public static inline var COLOR_CYAN:BlissColor = 0xFF00FFFF;
 
 	/**
 	 * A `Map<String, Int>` whose values are the static colors of `BlissColor`.

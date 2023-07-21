@@ -35,6 +35,24 @@ class BlissGraphic implements IDestroyable {
 	public var useCount(default, set):Int = 0;
 
 	/**
+	 * Returns a graphic from a Raylib Texture2D.
+	 * 
+	 * ⚠️ **WARNING!!** This graphic is not cached, and will have to be
+	 * cached elsewhere.
+	 * 
+	 * @param texture  The texture to create a graphic from
+	 * @param key      The name to store this graphic as in the cache.
+	 */
+	public static function fromRaylib(texture:Rl.Texture2D, ?key:String) {
+		if(key == null) key = '${texture.width}x${texture.height}:${texture.id}:${texture.format}';
+
+		var graphic:BlissGraphic = new BlissGraphic();
+		graphic.texture = texture;
+		graphic.key = key;
+		return graphic;
+	}
+
+	/**
 	 * Returns a graphic from an asset path.
 	 * 
 	 * @param path  The path to load from. Example: assets/haxe.png
@@ -43,7 +61,6 @@ class BlissGraphic implements IDestroyable {
 	public static function fromFile(path:String, ?key:String):BlissGraphic {
 		if(key == null) key = path;
 
-		@:privateAccess
 		if(Game.graphic.isCached(key))
 			return Game.graphic.get(key);
 		else {

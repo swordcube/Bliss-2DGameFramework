@@ -1,5 +1,6 @@
 package bliss.engine;
 
+import bliss.backend.graphics.BlissColor;
 import bliss.engine.animation.Animation;
 import bliss.engine.animation.AnimationController;
 import bliss.backend.graphics.BlissGraphic;
@@ -116,11 +117,22 @@ class Sprite extends Object2D {
 	 */
 	public function loadGraphic(graphic:BlissGraphicAsset) {
 		if(graphic is BlissGraphic)
-			frames = AtlasFrames.fromGraphic(graphic);
+			this.graphic = graphic;
 		else if(graphic is String)
-			frames = AtlasFrames.fromGraphic(BlissGraphic.fromFile(cast(graphic, String)));
+			this.graphic = BlissGraphic.fromFile(cast(graphic, String));
+		
+		return this;
+	}
 
-		frames.graphic.useCount++;
+	public function makeGraphic(width:Int, height:Int, color:BlissColor = BlissColor.COLOR_WHITE, ?key:String) {
+		if(key == null) key = '${width}x${height}:${Std.string(color)}';
+
+		if(Game.graphic.isCached(key))
+			graphic = Game.graphic.get(key);
+		else {
+			final generated:Rl.Texture2D = Rl.loadTextureFromImage(Rl.genImageColor(width, height, color.toRaylib()));
+			graphic = Game.graphic.cacheGraphic(BlissGraphic.fromRaylib(generated));
+		}
 		return this;
 	}
 
@@ -176,7 +188,7 @@ class Sprite extends Object2D {
 	 * Makes this sprite potentially unusable afterwards!
 	 */
 	override function destroy() {
-		if(frames.graphic != null)
+		if(frames != null && frames.graphic != null)
 			frames.graphic.useCount--;
 		scale = null;
 		origin = null;
@@ -188,8 +200,14 @@ class Sprite extends Object2D {
 	//##-- VARIABLES/FUNCTIONS YOU NORMALLY SHOULDN'T HAVE TO TOUCH!! --##//
 	@:noCompletion
 	private function set_frames(v:AtlasFrames) {
+		if(frames != null && frames.graphic != null)
+			frames.graphic.useCount--;
+
+		animation.reset();
 		size.set(v.frames[0]?.width ?? 0, v.frames[0]?.height ?? 0);
+		
 		set_antialiasing(antialiasing); // forcefully update graphic antialiasing
+		v.graphic.useCount++;
 		return frames = v;
 	}
 
@@ -200,7 +218,6 @@ class Sprite extends Object2D {
 
 	@:noCompletion
 	private function set_graphic(v:BlissGraphic) {
-		animation.reset();
 		frames = AtlasFrames.fromGraphic(v);
 		return v;
 	}

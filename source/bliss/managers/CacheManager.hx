@@ -13,15 +13,6 @@ class CacheManager {
 	}
 
 	/**
-	 * Returns if a specified key exists.
-	 * 
-	 * @param key  The key to check.
-	 */
-	 public inline function exists(key:String) {
-		return _cache.exists(key);
-	}
-
-	/**
 	 * Returns whether or not a asset with a specified key
 	 * can be found in the cache.
 	 *
