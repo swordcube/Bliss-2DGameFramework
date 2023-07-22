@@ -104,7 +104,8 @@ class MusicPlayer extends Object implements ISound {
 
 		playing = false;
         Rl.stopMusicStream(music.music);
-		onComplete();
+		if(onComplete != null)
+			onComplete();
 		return this;
 	}
 

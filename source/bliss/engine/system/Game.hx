@@ -117,6 +117,11 @@ class Game {
 	public static var sound:SoundManager;
 
 	/**
+	 * The default global manager for all timers.
+	 */
+	public static var timers:TimerManager;
+
+	/**
 	 * By default this just refers to the first entry in the `Game.cameras.list`
 	 * array but you can do what you like with it.
 	 */
@@ -195,6 +200,7 @@ class Game {
 		cameras = new CameraManager();
 		signals = new SignalManager();
 		sound = new SoundManager();
+		timers = new TimerManager();
 		cache = new CacheManager();
 		random = new RNGManager();
 	}

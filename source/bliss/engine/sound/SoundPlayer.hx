@@ -113,7 +113,8 @@ class SoundPlayer extends Object implements ISound {
 
 		playing = false;
         Rl.stopSound(sound.sound);
-		onComplete();
+		if(onComplete != null)
+			onComplete();
 		return this;
 	}
 
