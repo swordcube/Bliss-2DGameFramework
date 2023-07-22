@@ -17,6 +17,7 @@ class GameObject {
 			scene.update(elapsed);
 			Game.signals.postSceneUpdate.emit(scene);
 		}
+		Game.keys.update(elapsed);
 		Game.cameras.update(elapsed);
 
 		if(scene != _requestedScene)
