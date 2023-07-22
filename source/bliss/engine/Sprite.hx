@@ -106,6 +106,14 @@ class Sprite extends Object2D {
 
 	override function update(elapsed:Float) {
 		super.update(elapsed);
+		updateAnimation(elapsed);
+	}
+
+	/**
+	 * This is separated so it can be easily
+	 * overriden without trying to run other update stuff!
+	 */
+	private function updateAnimation(elapsed:Float) {
 		animation.update(elapsed);
 	}
 
