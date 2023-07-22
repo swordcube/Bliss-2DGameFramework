@@ -110,7 +110,7 @@ class Group<T:Object> extends Object {
 	/**
 	 * Remove all objects from this group.
 	 * 
-	 * WARNING: Does not `destroy()` or `kill()` any of these objects!
+	 * ⚠️ **WARNING**: Does not `destroy()` or `kill()` any of these objects!
 	 */
 	public function clear() {
 		length = 0;
