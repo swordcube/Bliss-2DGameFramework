@@ -1,11 +1,12 @@
 package bliss.engine.system;
 
-import bliss.backend.sound.SoundSystem;
 import bliss.backend.Application;
-
-import bliss.managers.*;
+import bliss.backend.sound.SoundSystem;
 
 import bliss.engine.Scene;
+import bliss.engine.utilities.MathUtil;
+
+import bliss.managers.*;
 
 enum abstract ScaleMode(Int) to Int from Int {
 	/**
@@ -189,7 +190,7 @@ class Game {
 
 	@:noCompletion
 	private static inline function get_elapsed():Float {
-		return Application.self.deltaTime;
+		return MathUtil.bound(Application.self.deltaTime, 0, maxElapsed);
 	}
 
 	@:noCompletion

@@ -1,12 +1,6 @@
 package bliss.engine.system;
 
-import bliss.backend.Application;
-
-import bliss.managers.MusicManager;
-import bliss.managers.CacheManager;
-
 import bliss.engine.Scene;
-import bliss.engine.utilities.MathUtil;
 
 @:allow(bliss.engine.system.Game)
 class GameObject {
@@ -17,7 +11,6 @@ class GameObject {
 
 	public function update(elapsed:Float) {
 		if(_switchingScene) return;
-		elapsed = MathUtil.bound(elapsed, 0, Game.maxElapsed);
 
 		if(scene != null) {
 			Game.signals.preSceneUpdate.emit(scene);
