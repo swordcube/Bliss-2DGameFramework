@@ -43,5 +43,8 @@ class TestScene extends Scene {
 
 		var zoom:Float = 1.25 + (Math.sin(death) * 0.5);
 		newCam.zoom.set(zoom, zoom);
+
+		if(Game.keys.justPressed(SPACE))
+			Game.switchScene(new TestScene());
 	}
 }

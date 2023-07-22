@@ -1,7 +1,9 @@
 package bliss.managers;
 
 import bliss.backend.Debug;
+
 import bliss.engine.Camera;
+import bliss.engine.system.Game;
 
 using bliss.engine.utilities.ArrayUtil;
 
@@ -30,7 +32,7 @@ class CameraManager {
 			newCamera = new Camera();
 
 		Camera.defaultCameras = [newCamera];
-		_cameras.push(newCamera);
+		Game.camera = add(newCamera);
 	}
 
 	/**

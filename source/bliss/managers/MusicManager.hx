@@ -32,6 +32,15 @@ class MusicManager {
 		return music;
 	}
 
+	/**
+	 * Destroys each music asset in cache.
+	 */
+	public static inline function clear() {
+		for(asset in _cache)
+			asset.destroy();
+		_cache.clear();
+	}
+
     @:noCompletion
 	private static var _cache:Map<String, BlissMusic> = [];
 }

@@ -34,7 +34,7 @@ class CacheManager {
 	}
 
 	/**
-	 * Destroys each graphic in cache.
+	 * Destroys each asset in cache.
 	 */
 	public inline function clear() {
 		for(asset in _cache)

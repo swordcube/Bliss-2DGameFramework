@@ -73,8 +73,6 @@ class Application {
 		// must stop aswell.
 		for(window in Window._windows)
 			window.close();
-
-		Debug.log(GENERAL, "Application stopped!");
 	}
 
 	public inline function update() {

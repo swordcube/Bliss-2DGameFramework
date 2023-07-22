@@ -76,8 +76,11 @@ class BlissGraphic implements IDestroyable {
 	 * unusable afterwards!
 	 */
 	public function destroy() {
+		@:privateAccess
+		Game.graphic._cache.remove(key);
 		Rl.unloadTexture(texture);
 		texture = null;
+		@:bypassAccessor
 		useCount = -1;
 	}
 

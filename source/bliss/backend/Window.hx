@@ -38,8 +38,7 @@ class Window {
 		window.framerate = framerate;
 
 		_windows.push(window);
-
-		Debug.log(SUCCESS, "Made a new window!");
+		
 		return window;
 	}
 

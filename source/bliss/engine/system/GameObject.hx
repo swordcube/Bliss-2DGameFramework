@@ -1,8 +1,12 @@
 package bliss.engine.system;
 
 import bliss.backend.Application;
+
+import bliss.managers.MusicManager;
 import bliss.managers.CacheManager;
+
 import bliss.engine.Scene;
+import bliss.engine.utilities.MathUtil;
 
 @:allow(bliss.engine.system.Game)
 class GameObject {
@@ -12,8 +16,8 @@ class GameObject {
 	public var scene:Scene;
 
 	public function update(elapsed:Float) {
-		if(scene != _requestedScene)
-			switchScene();
+		if(_switchingScene) return;
+		elapsed = MathUtil.bound(elapsed, 0, Game.maxElapsed);
 
 		if(scene != null) {
 			Game.signals.preSceneUpdate.emit(scene);
@@ -21,6 +25,9 @@ class GameObject {
 			Game.signals.postSceneUpdate.emit(scene);
 		}
 		Game.cameras.update(elapsed);
+
+		if(scene != _requestedScene)
+			switchScene();
 	}
 
 	public function render() {
@@ -32,10 +39,9 @@ class GameObject {
 		Game.cameras.render();
 	}
 
-	public function switchScene() {
-		// Reset cameras list
-		Game.cameras.reset();
-		
+	public function switchScene() {	
+		_switchingScene = true;
+
 		// Destroy old scene if possible
 		if(scene != null) {
 			Game.signals.preSceneDestroy.emit(scene);
@@ -43,19 +49,26 @@ class GameObject {
 			Game.signals.postSceneDestroy.emit(scene);
 		}
 
+		// Reset cameras list
+		Game.cameras.reset();
+
 		// Switch the scene to the currently requested one
 		scene = _requestedScene;
 
 		Game.signals.preSceneCreate.emit(scene);
-		Game.cache.clear();
 		scene.create();
 		scene.createPost();
 		Game.signals.postSceneCreate.emit(scene);
+
+		_switchingScene = false;
 	}
 
 	//##-- VARIABLES/FUNCTIONS YOU NORMALLY SHOULDN'T HAVE TO TOUCH!! --##//
 	@:noCompletion
 	private var _requestedScene:Scene;
+
+	@:noCompletion
+	private var _switchingScene:Bool = false;
 
 	@:noCompletion
 	private function new() {}

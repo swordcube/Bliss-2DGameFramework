@@ -1,5 +1,8 @@
 # 🌲 Bliss
-A 2D game framework made in Haxe.
+A simple and performant 2D game framework made in Haxe.
+
+This framework is designed to be similar to HaxeFlixel in it's usage,
+As i want a framework that is like HaxeFlixel without the insane performance loss.
 
 Install through github:
 ```

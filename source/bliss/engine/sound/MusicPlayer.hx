@@ -66,14 +66,19 @@ class MusicPlayer extends Object implements ISound {
 	}
 
 	override function update(elapsed:Float) {
-		if(music == null)
+		if(music == null) {
+			updating = false;
 			return;
+		}
+		updating = true;
 
 		if(playing)
 			Rl.updateMusicStream(music.music);
 
 		if(!Rl.isMusicStreamPlaying(music.music) && playing && !paused && !loop)
 			stop();
+
+		updating = false;
 	}
 
 	/**
@@ -131,6 +136,9 @@ class MusicPlayer extends Object implements ISound {
 	private var music:BlissMusic;
 
 	@:noCompletion
+	private var updating:Bool = false;
+
+	@:noCompletion
 	private function set_volume(v:Float):Float {
 		if(music != null)
 			Rl.setMusicVolume(music.music, v);
@@ -175,6 +183,8 @@ class MusicPlayer extends Object implements ISound {
 	}
 
 	override function destroy() {
+		playing = false;
+		paused = true;
 		music.useCount--;
 		super.destroy();
 	}

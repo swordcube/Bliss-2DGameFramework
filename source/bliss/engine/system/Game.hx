@@ -37,6 +37,11 @@ class Game {
 	public static var elapsed(get, never):Float;
 
 	/**
+	 * The highest value that `elapsed` can go to.
+	 */
+	public static var maxElapsed:Float = 0.1;
+
+	/**
 	 * The framerate the game window goes to when said
 	 * window is unfocused.
 	 */
@@ -87,6 +92,21 @@ class Game {
 	public static var cache:CacheManager;
 
 	/**
+	 * A simple helper to generate psuedo-random numbers.
+	 * 
+	 * ### Generating a random float:
+	 * ```haxe
+	 * Game.random.float(4.456, 56.787);
+	 * ```
+	 * 
+	 * ### Generating a random int:
+	 * ```haxe
+	 * Game.random.int(4, 56);
+	 * ```
+	 */
+	public static var random:RNGManager;
+
+	/**
 	 * The recommended way to easily play sounds.
 	 * 
 	 * Example:
@@ -97,10 +117,16 @@ class Game {
 	public static var sound:SoundManager;
 
 	/**
+	 * By default this just refers to the first entry in the `Game.cameras.list`
+	 * array but you can do what you like with it.
+	 */
+	public static var camera:Camera;
+
+	/**
 	 * Sets up a brand new game window.
 	 * 
-	 * @param framerate The maximum framerate the game is capped to.
-	 * @param initialScene The scene to load when the game starts.
+	 * @param framerate     The maximum framerate the game is capped to.
+	 * @param initialScene  The scene to load when the game starts.
 	 */
 	public static function create(framerate:Int, initialScene:Scene) {
 		// Set the framerate of the to-be created game window.
@@ -144,7 +170,7 @@ class Game {
 	/**
 	 * Makes the game switch to any specified scene.
 	 * 
-	 * @param scene The scene to switch to.
+	 * @param scene  The scene to switch to.
 	 */
 	public static function switchScene(newScene:Scene) {
 		_game._requestedScene = newScene;
@@ -170,6 +196,7 @@ class Game {
 		signals = new SignalManager();
 		sound = new SoundManager();
 		cache = new CacheManager();
+		random = new RNGManager();
 	}
 
 	@:noCompletion

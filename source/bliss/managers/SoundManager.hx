@@ -1,5 +1,7 @@
 package bliss.managers;
 
+import bliss.backend.Application;
+import sys.thread.Thread;
 import bliss.backend.sound.BlissMusic.BlissMusicAsset;
 import bliss.backend.sound.BlissSound;
 import bliss.backend.Debug;
@@ -60,13 +62,21 @@ class SoundManager {
 		_cache.set(sound.key, sound);
 		return sound;
 	}
+
+    /**
+	 * Destroys each sound in cache.
+	 */
+	public inline function clear() {
+		for(asset in _cache)
+			asset.destroy();
+		_cache.clear();
+	}
     
     public function new() {
         Rl.initAudioDevice();
         volume = 0.3;
         
         Game.signals.preSceneCreate.connect((_) -> {
-            Debug.log(GENERAL, "Clearing sounds...");
             for(sound in list) {
                 sound.stop();
                 sound.destroy();
@@ -75,7 +85,13 @@ class SoundManager {
             list.clearArray();
         });
 
-        Game.signals.preSceneUpdate.connect(update);
+        // TODO: make audio not pause when a state switch occurs
+        // Thread.create(() -> {
+        //     final app = Application.self;
+        //     while(app.running)
+        //         update();
+        // });
+        Game.signals.preSceneUpdate.connect((_) -> update());
     }
 
     /**
@@ -115,15 +131,17 @@ class SoundManager {
     }
 
     @:noCompletion
-    private function update(_) {
+    private function update() {
         final elapsed = Game.elapsed;
 
         for(sound in list) {
-            if(sound != null)
+            @:privateAccess
+            if(sound != null && !sound.updating)
                 sound.update(elapsed);
         }
         
-        if(music != null)
+        @:privateAccess
+        if(music != null && !music.updating)
             music.update(elapsed);
     }
 

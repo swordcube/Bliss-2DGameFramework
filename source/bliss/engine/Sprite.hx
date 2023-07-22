@@ -67,7 +67,7 @@ class Sprite extends Object2D {
 	 * The position of the sprite's graphic relative to its hitbox. For example, `offset.x = 10;` will
 	 * show the graphic 10 pixels right of the hitbox.
 	 * 
-	 * Likely needs to be adjusted after changing a sprite's `width`, `height` or `scale`.
+	 * Likely needs to be adjusted after changing a sprite's `size` or `scale`.
 	 */
 	public var offset(default, set):Vector2D;
 
@@ -187,7 +187,10 @@ class Sprite extends Object2D {
 	 * Makes this sprite potentially unusable afterwards!
 	 */
 	override function destroy() {
-		if(frames != null && frames.graphic != null)
+		@:privateAccess
+		var _assets:Array<BlissGraphic> = [for(asset in Game.graphic._cache) asset];
+		
+		if(frames != null && frames.graphic != null && !_assets.contains(frames.graphic))
 			frames.graphic.useCount--;
 		scale = null;
 		origin = null;
@@ -282,6 +285,7 @@ class Sprite extends Object2D {
 		_renderSpritePos.x += (_renderOffset.x * absScale.x) * cosMult + (_renderOffset.y * absScale.y) * -sinMult;
 		_renderSpritePos.y += (_renderOffset.x * absScale.x) * sinMult + (_renderOffset.y * absScale.y) * cosMult;
 
+		@:privateAccess
 		var _finalRenderPos:Vector2D = camera.adjustToCamera(_renderSpritePos);
 
 		Rl.drawTexturePro(

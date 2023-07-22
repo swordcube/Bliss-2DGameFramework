@@ -25,4 +25,7 @@ interface ISound extends IObject {
      * Resumes this sound.
      */
     public function resume():ISound;
+
+    @:noCompletion
+    private var updating:Bool;
 }

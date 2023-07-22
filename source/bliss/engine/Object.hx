@@ -48,7 +48,7 @@ class Object implements IObject {
 	 * A function that can be easily overriden
 	 * to initialize variables for this object.
 	 */
-	public function initVars() {}
+	private function initVars() {}
 
 	/**
 	 * The function that updates this object.

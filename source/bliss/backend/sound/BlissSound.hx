@@ -53,6 +53,8 @@ class BlissSound implements IDestroyable {
 	 * unusable afterwards!
 	 */
 	public function destroy() {
+		@:privateAccess
+		Game.sound._cache.remove(key);
 		Rl.unloadSound(sound);
 		destroyed = true;
 		useCount = -1;

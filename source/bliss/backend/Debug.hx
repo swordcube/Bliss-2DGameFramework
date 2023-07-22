@@ -32,13 +32,13 @@ class Debug {
 	 * @param content The content to print/log.
 	 */
 	public static inline function log(type:LogType, content:Dynamic, ?infos:PosInfos) {
-		var classPrefix:String = "[ "+infos.className.split(".").last()+"."+infos.methodName+":"+infos.lineNumber+" ]";
 		var prefix:String = switch(type) {
 			case WARNING: "[ WARNING ]";
 			case ERROR:   "[  ERROR  ]";
 			case SUCCESS: "[ SUCCESS ]";
-			default:      "[  BLISS  ]";
+			default:      "[  TRACE  ]";
 		};
-		Sys.println(classPrefix+" "+prefix+" "+Std.string(content));
+		var classPrefix:String = "[ "+infos.className.split(".").last()+"."+infos.methodName+":"+infos.lineNumber+" ]";
+		Sys.println(prefix+" "+classPrefix+" "+Std.string(content));
 	}
 }

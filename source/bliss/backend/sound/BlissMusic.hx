@@ -1,8 +1,11 @@
 package bliss.backend.sound;
 
-import bliss.managers.MusicManager;
-import bliss.engine.utilities.typeLimit.*;
 import bliss.backend.interfaces.IDestroyable;
+
+import bliss.engine.system.Game;
+import bliss.engine.utilities.typeLimit.*;
+
+import bliss.managers.MusicManager;
 
 typedef BlissMusicAsset = OneOfTwo<String, BlissMusic>;
 
@@ -52,8 +55,11 @@ class BlissMusic implements IDestroyable {
 	 * unusable afterwards!
 	 */
 	public function destroy() {
+		@:privateAccess
+		MusicManager._cache.remove(key);
 		Rl.unloadMusicStream(music);
 		destroyed = true;
+		@:bypassAccessor
 		useCount = -1;
 	}
 

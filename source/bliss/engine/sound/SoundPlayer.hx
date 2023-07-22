@@ -64,14 +64,19 @@ class SoundPlayer extends Object implements ISound {
 	}
 
 	override function update(elapsed:Float) {
-		if(sound == null)
+		if(sound == null) {
+			updating = false;
 			return;
+		}
+		updating = true;
 
 		if(!Rl.isSoundPlaying(sound.sound) && !loop && playing)
             stop();
 
         if(!Rl.isSoundPlaying(sound.sound) && loop && playing)
             Rl.playSound(sound.sound);
+
+		updating = false;
 	}
 
 	public function onFocusIn() {
@@ -138,6 +143,9 @@ class SoundPlayer extends Object implements ISound {
 
 	@:noCompletion
 	private var sound:BlissSound;
+
+	@:noCompletion
+	private var updating:Bool = false;
 
 	@:noCompletion
 	private function set_volume(v:Float):Float {
