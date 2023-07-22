@@ -67,6 +67,7 @@ class BlissGraphic implements IDestroyable {
 			var graphic:BlissGraphic = new BlissGraphic();
 			graphic.texture = Rl.loadTexture(path);
 			graphic.key = key;
+			Rl.setTextureWrap(graphic.texture, Rl.TextureWrap.CLAMP);
 			return Game.graphic.cacheGraphic(graphic);
 		}
 	}
@@ -109,6 +110,6 @@ class BlissGraphic implements IDestroyable {
 
 	@:noCompletion
 	private inline function get_height():Int {
-		return texture.width;
+		return texture.height;
 	}
 }

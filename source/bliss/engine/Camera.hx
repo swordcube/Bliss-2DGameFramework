@@ -26,9 +26,38 @@ class Camera extends Object2D {
 	public var offset:Vector2D;
 
 	/**
+	 * The initial zoom multiplier of this camera.
+	 */
+	public var initialZoom:Vector2D;
+
+	/**
 	 * The current zoom multiplier of this camera.
 	 */
 	public var zoom:Vector2D;
+
+	/**
+	 * Used to smoothly track the camera as it follows:
+	 * The percent of the distance to the follow `target` the camera moves per 1/60 sec.
+	 * 
+	 * The maximum value means no camera easing. A value of `0` means the camera does not move.
+	 */
+	public var followLerp(default, set):Float = 1;
+
+	 /**
+	  * Whenever target following is enabled. Defaults to `true`.
+	  */
+	public var followEnabled:Bool = true;
+
+	/**
+	 * The target that this camera is currently following.
+	 */
+	public var target:Object2D = null;
+
+	/**
+	 * Stores the basic parallax scrolling values.
+	 * This is basically the camera's top-left corner position in world coordinates.
+	 */
+	public var scroll:Vector2D;
 
 	/**
 	 * Creates a new Camera instance.
@@ -38,8 +67,9 @@ class Camera extends Object2D {
 	}
 
 	override function initVars() {
-		zoom = new Vector2D(1, 1);
+		initialZoom = zoom = new Vector2D(1, 1);
 		offset = new Vector2D(0, 0);
+		scroll = new Vector2D(0, 0);
 	}
 
 	/**
@@ -110,6 +140,29 @@ class Camera extends Object2D {
 	}
 
 	/**
+	 * Tells this camera object what `Object` to track.
+	 *
+	 * @param   target   The object you want the camera to track. Set to `null` to not follow anything.
+	 * @param   lerp     How much lag the camera should have (can help smooth out the camera movement).
+	 */
+	public function follow(target:Object2D, ?lerp:Float) {
+		if(lerp == null)
+			lerp = 1;
+
+		this.target = target;
+	}
+
+	/**
+	 * Snaps this camera to the target instantly.
+	 */
+	public function snapToTarget() {
+		scroll.set(
+			(target.position.x - Game.width) * 0.5,
+			(target.position.y - Game.height) * 0.5
+		);
+	}
+
+	/**
 	 * Stops every camera effect at once.
 	 */
 	public function stopFX() {
@@ -125,6 +178,7 @@ class Camera extends Object2D {
 	 * @param elapsed The time in seconds between the last and current frame.
 	 */
 	override function update(elapsed:Float) {
+		updateFollow(elapsed);
 		updateFlashFX(elapsed);
 		updateFadeFX(elapsed);
 		updateShakeFX(elapsed);
@@ -197,6 +251,25 @@ class Camera extends Object2D {
 
 	@:noCompletion
 	private var _fxShakeAxes:Axes;
+
+	@:noCompletion
+	private function set_followLerp(value:Float) {
+		return followLerp = MathUtil.bound(value, 0, 1);
+	}
+
+	@:noCompletion
+	private function updateFollow(elapsed:Float) {
+		if(!followEnabled || target == null) return;
+
+		final lerpSpeed:Float = MathUtil.bound(followLerp * 60 * elapsed, 0, 1);
+
+		if(followLerp >= 1 || lerpSpeed >= 1)
+			snapToTarget();
+		else {
+			scroll.x = MathUtil.lerp(scroll.x, (target.position.x - Game.width) * 0.5, lerpSpeed);
+			scroll.y = MathUtil.lerp(scroll.y, (target.position.y - Game.height) * 0.5, lerpSpeed);
+		}
+	}
 
 	@:noCompletion
 	private function completeFade() {
@@ -317,6 +390,7 @@ class Camera extends Object2D {
 			newPos.x * sinMult + newPos.y * cosMult
 		);
 		newPos += centerPos;
+		newPos += this.position;
 		newPos += offset;
 
 		return newPos;

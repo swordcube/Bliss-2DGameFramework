@@ -159,6 +159,13 @@ class Sprite extends Object2D {
 	}
 
 	/**
+	 * Gets the midpoint of this sprite.
+	 */
+	public inline function getMidpoint() {
+		return new Vector2D(width * 0.5, height * 0.5);
+	}
+
+	/**
 	 * Sets the position of the sprite to the center of the screen.
 	 */
 	public inline function screenCenter(axes:Axes = XY) {
@@ -279,8 +286,8 @@ class Sprite extends Object2D {
 		);
 
 		var _renderOffset = offset + (_animation?.offset ?? Vector2D.ZERO);
-		_renderOffset.x += -_curFrameData.frameX;
-		_renderOffset.y += -_curFrameData.frameY;
+		_renderOffset += new Vector2D(-_curFrameData.frameX, -_curFrameData.frameY);
+		_renderOffset -= new Vector2D(camera.scroll.x * scrollFactor.x, camera.scroll.y * scrollFactor.y);
 
 		_renderSpritePos.x += (_renderOffset.x * absScale.x) * cosMult + (_renderOffset.y * absScale.y) * -sinMult;
 		_renderSpritePos.y += (_renderOffset.x * absScale.x) * sinMult + (_renderOffset.y * absScale.y) * cosMult;
