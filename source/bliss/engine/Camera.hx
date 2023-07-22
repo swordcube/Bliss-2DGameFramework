@@ -158,8 +158,8 @@ class Camera extends Object2D {
 	 */
 	public function snapToTarget() {
 		scroll.set(
-			(target.position.x - Game.width) * 0.5,
-			(target.position.y - Game.height) * 0.5
+			target.position.x - (Game.width * 0.5),
+			target.position.y - (Game.height * 0.5)
 		);
 	}
 
@@ -267,8 +267,8 @@ class Camera extends Object2D {
 		if(followLerp >= 1 || lerpSpeed >= 1)
 			snapToTarget();
 		else {
-			scroll.x = MathUtil.lerp(scroll.x, (target.position.x - Game.width) * 0.5, lerpSpeed);
-			scroll.y = MathUtil.lerp(scroll.y, (target.position.y - Game.height) * 0.5, lerpSpeed);
+			scroll.x = MathUtil.lerp(scroll.x, target.position.x - (Game.width * 0.5), lerpSpeed);
+			scroll.y = MathUtil.lerp(scroll.y, target.position.y - (Game.height * 0.5), lerpSpeed);
 		}
 	}
 
