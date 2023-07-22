@@ -1,5 +1,6 @@
 package bliss.managers;
 
+import bliss.backend.sound.SoundSystem;
 import bliss.backend.Application;
 import sys.thread.Thread;
 import bliss.backend.sound.BlissMusic.BlissMusicAsset;
@@ -73,7 +74,7 @@ class SoundManager {
 	}
     
     public function new() {
-        Rl.initAudioDevice();
+        SoundSystem.init();
         volume = 0.3;
         
         Game.signals.preSceneCreate.connect((_) -> {

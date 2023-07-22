@@ -38,6 +38,11 @@ class Object2D extends Object {
 	public var angle(default, set):Float = 0;
 
 	/**
+	 * Whether or not this object is immovable.
+	 */
+	public var immovable:Bool = false;
+
+	/**
 	 * Creates a new Object2D instance.
 	 * 
 	 * @param x       The X position of this new object in world space, Starts from the top left.
@@ -95,5 +100,15 @@ class Object2D extends Object {
 	@:noCompletion
 	private function set_angle(value:Float):Float {
 		return angle = value;
+	}
+
+	@:noCompletion
+	private function get_immovable():Bool {
+		return immovable;
+	}
+
+	@:noCompletion
+	private function set_immovable(v:Bool):Bool {
+		return immovable = v;
 	}
 }

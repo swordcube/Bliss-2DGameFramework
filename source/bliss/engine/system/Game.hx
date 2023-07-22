@@ -1,9 +1,9 @@
 package bliss.engine.system;
 
 import bliss.backend.Application;
-import bliss.backend.sound.SoundSystem;
 
 import bliss.engine.Scene;
+import bliss.engine.tweens.Tween;
 import bliss.engine.utilities.MathUtil;
 
 import bliss.managers.*;
@@ -204,6 +204,8 @@ class Game {
 		timers = new TimerManager();
 		cache = new CacheManager();
 		random = new RNGManager();
+
+		Tween.globalManager = new TweenManager();
 	}
 
 	@:noCompletion

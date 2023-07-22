@@ -24,7 +24,7 @@ class Sprite extends Object2D {
 	/**
 	 * The graphic that this sprite renders.
 	 */
-	 @:isVar public var graphic(get, set):BlissGraphic;
+	@:isVar public var graphic(get, set):BlissGraphic;
 
 	/**
 	 * The collection of frames that this sprite
