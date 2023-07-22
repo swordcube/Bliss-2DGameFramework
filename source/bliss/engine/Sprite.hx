@@ -162,7 +162,10 @@ class Sprite extends Object2D {
 	 * Gets the midpoint of this sprite.
 	 */
 	public inline function getMidpoint() {
-		return new Vector2D(width * 0.5, height * 0.5);
+		return new Vector2D(
+			position.x + width * 0.5, 
+			position.y + height * 0.5
+		);
 	}
 
 	/**

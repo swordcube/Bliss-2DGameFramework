@@ -150,6 +150,7 @@ class Camera extends Object2D {
 			lerp = 1;
 
 		this.target = target;
+		this.followLerp = lerp;
 	}
 
 	/**

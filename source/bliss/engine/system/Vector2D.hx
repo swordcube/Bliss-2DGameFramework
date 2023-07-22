@@ -94,7 +94,7 @@ class BaseVector2D {
      * @param x The X-coordinate of the point in space.
      * @param y The Y-coordinate of the point in space.
      */
-    public inline function set(x:Float, y:Float) {
+    public inline function set(x:Float = 0, y:Float = 0) {
         this.x = x;
         this.y = y;
         return this;
@@ -106,7 +106,7 @@ class BaseVector2D {
      * @param x Amount to add to x
      * @param y Amount to add to y
      */
-    public inline function add(x:Float, y:Float) {
+    public inline function add(x:Float = 0, y:Float = 0) {
         this.x += x;
         this.y += y;
         return this;
@@ -118,7 +118,7 @@ class BaseVector2D {
      * @param x Amount to subtract from x
      * @param y Amount to subtract from y
      */
-    public inline function subtract(x:Float, y:Float) {
+    public inline function subtract(x:Float = 0, y:Float = 0) {
         this.x -= x;
         this.y -= y;
         return this;
@@ -130,7 +130,7 @@ class BaseVector2D {
      * @param x Amount to multiply to x
      * @param y Amount to multiply to y
      */
-    public inline function multiply(x:Float, y:Float) {
+    public inline function multiply(x:Float = 0, y:Float = 0) {
         this.x *= x;
         this.y *= y;
         return this;
@@ -142,7 +142,7 @@ class BaseVector2D {
      * @param x Amount to divide from x
      * @param y Amount to divide from y
      */
-    public inline function divide(x:Float, y:Float) {
+    public inline function divide(x:Float = 0, y:Float = 0) {
         this.x /= x;
         this.y /= y;
         return this;
