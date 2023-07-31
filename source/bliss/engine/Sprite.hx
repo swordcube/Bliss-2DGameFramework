@@ -259,11 +259,11 @@ class Sprite extends Object2D {
 	// most likely breaking the entire function
 	@:noCompletion
 	private function renderComplex(camera:Camera) {
-		// If the graphic or it's internal texture are somehow null
+		// If the graphic is somehow null
 		// or the sprite is off screen or the attached camera's
 		// zoom is 0, Don't try to render.
 		@:privateAccess
-		if(graphic?.texture == null || !camera.isOnScreen(this) || camera.zoom.x == 0 || camera.zoom.y == 0)
+		if(graphic == null || !camera.isOnScreen(this) || camera.zoom.x == 0 || camera.zoom.y == 0)
 			return;
 
 		final radians = (angle % 360) * MathUtil.FULL_PI / 180;
@@ -279,9 +279,7 @@ class Sprite extends Object2D {
 
 		@:privateAccess
 		final _rawTexture:Rl.Texture2D = cast(graphic.texture, Rl.Texture2D);
-
-		if(_rawTexture != null)
-			Rl.setTextureFilter(_rawTexture, antialiasing ? Rl.TextureFilter.BILINEAR : Rl.TextureFilter.POINT);
+		Rl.setTextureFilter(_rawTexture, antialiasing ? Rl.TextureFilter.BILINEAR : Rl.TextureFilter.POINT);
 
 		final _animation:Animation = animation.curAnim;
 

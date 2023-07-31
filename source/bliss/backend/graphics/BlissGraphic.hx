@@ -80,7 +80,7 @@ class BlissGraphic implements IDestroyable {
 		@:privateAccess
 		Game.graphic._cache.remove(key);
 		Rl.unloadTexture(texture);
-		texture = null;
+		destroyed = true;
 		@:bypassAccessor
 		useCount = -1;
 	}
@@ -96,8 +96,11 @@ class BlissGraphic implements IDestroyable {
 	private var texture:Rl.Texture2D;
 
 	@:noCompletion
+	private var destroyed:Bool = false;
+
+	@:noCompletion
 	private inline function set_useCount(v:Int) {
-		if(v < 1 && !persist && texture != null)
+		if(v < 1 && !persist && !destroyed)
 			destroy();
 		
 		return useCount = v;
